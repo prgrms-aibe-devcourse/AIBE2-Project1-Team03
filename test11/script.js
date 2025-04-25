@@ -37,7 +37,7 @@ function highlightRecommendedCountries(countryIds) {
     }
   
     const allCountries = svgDoc.querySelectorAll('[id]');
-    allCountries.forEach(el => el.style.fill = '');
+    allCountries.forEach(el => el.style.fill = '#ffffff')
   
     countryIds.forEach(id => {
       const country = svgDoc.getElementById(id);

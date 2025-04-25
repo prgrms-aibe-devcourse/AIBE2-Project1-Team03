@@ -53,6 +53,12 @@ function highlightRecommendedCountries(countryIds) {
 svgObject.addEventListener('load', () => {
   const svgDoc = svgObject.contentDocument;
   const countries = ['KR', 'JP', 'FR'];  // 현재 등록된 나라들
+  const paths = svgDoc.querySelectorAll('path');
+  paths.forEach(path => {
+    path.style.fill = '#ffffff';               // 흰색 채움
+    path.style.stroke = '#333333';             // 검정 테두리
+    path.style.strokeWidth = '0.5';
+  });
 
   countries.forEach(countryId => {
     const countryElement = svgDoc.getElementById(countryId);
@@ -61,7 +67,7 @@ svgObject.addEventListener('load', () => {
         countryElement.style.fill = '#aad4c7';
       });
       countryElement.addEventListener('mouseout', () => {
-        countryElement.style.fill = '';
+        countryElement.style.fill = '#ffffff';
       });
       countryElement.addEventListener('click', () => {
         selectedCountry = countryId;

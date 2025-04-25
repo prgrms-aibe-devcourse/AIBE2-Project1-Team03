@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>World Map</title>
+  <link rel="stylesheet" href="travel.css">
+  <style>
+    #map-container {
+      width: 100%;
+      max-width: 10000px;
+      margin: auto;
+    }
+    svg path:hover {
+      fill: orange;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+
+  <div id="map-container">
+  </div>
+
+  <div id="sidePanel" class="side-panel">
+    <!--닫기 아이콘 추가-->
+    <button id="side-close">닫기</button>
+    <!-- 슬라이드 안에 분할된 메뉴들 -->
+    <div class="side-menu" id="contry_info"></div>
+    <div class="side-menu" id="weather"></div>
+    <div class="side-menu" id="tourist"></div>
+  </div>
+  <script src="travel.js"></script>
+</body>
+</html>

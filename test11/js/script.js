@@ -82,7 +82,7 @@ svgObject.addEventListener('load', () => {
 
 function renderSelectionPanel() {
   infoPanel.innerHTML = `
-    <h2>선택한 국가: ${getCountryName(selectedCountry)}</h2>
+    <h2>${getCountryName(selectedCountry)}</h2>
     <p>예산을 선택하세요:</p>
     <button class="budget-btn" data-budget="100만원 이하">100만원 이하</button>
     <button class="budget-btn" data-budget="100~300만원">100~300만원</button>
@@ -121,6 +121,7 @@ function showRecommendation() {
   }
 }
 
+/*
 /////////////////////////////
 // 🟣 챗봇 추천 기능 (예산 + 스타일 → 추천 국가 색칠)
 /////////////////////////////
@@ -181,3 +182,4 @@ const chatbotWindow = document.getElementById('chatbot-window');
 chatbotBtn.addEventListener('click', () => {
   chatbotWindow.classList.toggle('hidden');
 });
+*/

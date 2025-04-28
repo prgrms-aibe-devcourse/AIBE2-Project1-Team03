@@ -292,6 +292,17 @@ body {
     margin-top: 40px;
   }
 
+  .profile-img-box {
+    margin-bottom: 20px;
+  }
+  .profile-img {
+    width: 150px;
+    height: 150px;
+    object-fit: cover;
+    border-radius: 50%;
+    border: 2px solid #8e9aaf;
+  }
+
   /*모달 스타일*/
   .modal-overlay {
     position: fixed;

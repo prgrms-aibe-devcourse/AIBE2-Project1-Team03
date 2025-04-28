@@ -5,7 +5,7 @@ const firebaseConfig = {
   apiKey: "AIzaSyDyIGwUGgnoVIPXe4HINkYhZzYOT_B8xzo",
   authDomain: "aibe-3.firebaseapp.com",
   projectId: "aibe-3",
-  storageBucket: "aibe-3.appspot.com",
+  storageBucket: "aibe-3.firebasestorage.app",
   messagingSenderId: "303637126000",
   appId: "1:303637126000:web:d9d568d321334eeffa8db5",
   measurementId: "G-SY2NP4BGFC"

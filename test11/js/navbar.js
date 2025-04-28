@@ -2,15 +2,14 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebas
 import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js";
 
 const firebaseConfig = {
-    apiKey: "AIzaSyDyIGwUGgnoVIPXe4HINkYhZzYOT_B8xzo",
-    authDomain: "aibe-3.firebaseapp.com",
-    projectId: "aibe-3",
-    storageBucket: "aibe-3.appspot.com",  
-    messagingSenderId: "303637126000",
-    appId: "1:303637126000:web:d9d568d321334eeffa8db5",
-    measurementId: "G-SY2NP4BGFC"
-  };
-
+  apiKey: "AIzaSyDyIGwUGgnoVIPXe4HINkYhZzYOT_B8xzo",
+  authDomain: "aibe-3.firebaseapp.com",
+  projectId: "aibe-3",
+  storageBucket: "aibe-3.firebasestorage.app",
+  messagingSenderId: "303637126000",
+  appId: "1:303637126000:web:d9d568d321334eeffa8db5",
+  measurementId: "G-SY2NP4BGFC"
+};
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 

@@ -56,3 +56,10 @@ function renderPlaces(places) {
     container.appendChild(card);
   });
 }
+
+
+document.getElementById('city-input').addEventListener('keydown', function (e) {
+    if (e.key === 'Enter') {
+      loadPlaces();
+    }
+  });

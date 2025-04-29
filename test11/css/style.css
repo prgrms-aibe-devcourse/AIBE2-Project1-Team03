@@ -1,7 +1,7 @@
 body {
     margin: 0;
     font-family: 'Pretendard', sans-serif;
-    background: #ecece8;
+    background: #f3f5f5;
     color: #333;
   }
   
@@ -111,16 +111,96 @@ body {
     font-size: 14px;
   }
 
+  #login-wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 90vh;
+    background-color: #f5f7f9;
+  }
+  
+
+  
+  .login-form {
+    background: white;
+    padding: 40px 30px;
+    border-radius: 12px;
+    box-shadow: 0 8px 16px rgba(0,0,0,0.1);
+    width: 320px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  .login-form h2 {
+    margin-bottom: 20px;
+    font-size: 24px;
+  }
+  
+  .login-form input {
+    width: 100%;
+    padding: 12px;
+    margin-bottom: 15px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+  }
+  
+  .login-form button {
+    width: 100%;
+    padding: 12px;
+    background-color: #7e8aa5;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 16px;
+    cursor: pointer;
+  }
+  
+  .login-form button:hover {
+    background-color: #6b7890;
+  }
+  
+  .login-form p {
+    margin-top: 15px;
+    font-size: 14px;
+  }
+  
+  .login-form p a {
+    color: #6b5b95;
+    text-decoration: none;
+  }
+  
+  .login-form p a:hover {
+    text-decoration: underline;
+  }
+
+  #logo {
+    display: block;
+    margin: 20px auto 10px auto;
+    width: 170px; 
+    transform: translateX(-8px);
+    
+  }
+
+  .error-message {
+    color: #e53935;
+    margin-bottom: 10px;
+    font-size: 14px;
+    text-align: center;
+  }
+
+
 /* 상단메뉴바 스타일 */
   .navbar {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 15px 40px;               /* ← 여유 있으면서도 과하지 않게 */
+    padding: 15px 40px;               
     background-color: #f8f8f8;
     border-bottom: 1px solid #ddd;
     position: relative;
-    min-height: 70px;                /* ← 여기 줄여주자! */
+    min-height: 70px;                
     box-sizing: border-box;
   }
   .navbar a {

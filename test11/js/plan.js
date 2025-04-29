@@ -25,8 +25,8 @@ let draggedSourceDay = null;
 function renderTabs() {
   tabsContainer.innerHTML = '';
 
-  // 각 일정 이름마다 탭 생성
-  Object.keys(schedules).forEach(scheduleName => {
+  const tabNames = Object.keys(schedules).filter(name => name !== "나의 일정");
+  tabNames.forEach(scheduleName => {
     const tab = document.createElement('button');
     tab.className = 'tab';
 
@@ -42,7 +42,7 @@ function renderTabs() {
       e.stopPropagation();
       if (confirm(`'${scheduleName}' 일정을 삭제할까요?`)) {
         delete schedules[scheduleName];
-        const remaining = Object.keys(schedules);
+        const remaining = Object.keys(schedules).filter(n => n !== "나의 일정");
         currentSchedule = remaining.length > 0 ? remaining[0] : "";
         renderTabs();
         renderDays();
@@ -53,20 +53,39 @@ function renderTabs() {
     tab.appendChild(closeBtn);
 
     if (scheduleName === currentSchedule) {
-      tab.style.backgroundColor = "#ccc";
+      tab.classList.add('active');
     }
 
     tabsContainer.appendChild(tab);
 
   });
 
+  // ➤ 오른쪽 끝 탭 묶음
+  const rightGroup = document.createElement('div');
+  rightGroup.className = 'tab-group-right';
+
   // '일정 추가' 탭 버튼
   const addTab = document.createElement('button');
   addTab.className = 'tab add-tab';
   addTab.textContent = '일정 추가';
   addTab.onclick = addNewSchedule;
-  tabsContainer.appendChild(addTab);
+
+  // 나의 일정 탭 (삭제 불가)
+  const myTab = document.createElement('button');
+  myTab.className = 'tab my-schedule-tab';
+  myTab.textContent = '나의 일정';
+  myTab.onclick = () => switchTab("나의 일정");
+
+  if (currentSchedule === "나의 일정") {
+    myTab.classList.add('active');
+  }
+
+  rightGroup.appendChild(addTab);
+  rightGroup.appendChild(myTab);
+  tabsContainer.appendChild(rightGroup);
+  
 }
+
 
 // -------------- 탭 전환 -------------
 // 특정 탭으로 이동
@@ -438,30 +457,19 @@ document.addEventListener('drop', (e) => {
   }
 });
 
-// -------------- 저장 / 불러오기 -------------
+// -------------- 저장 -------------
 saveButton.addEventListener('click', saveSchedule);
-loadButton.addEventListener('click', loadSchedule);
 
 // 저장: LocalStorage에 전체 일정 저장
 function saveSchedule() {
-  localStorage.setItem('travelSchedules', JSON.stringify(schedules));
-  alert('저장 완료!');
-}
+  // 현재 일정 복사해서 나의 일정에 저장
+  if (!currentSchedule) return;
 
-// 불러오기: LocalStorage 에서 로드
-function loadSchedule() {
-  const saved = localStorage.getItem('travelSchedules');
-  if (saved) {
-    const loadedSchedules = JSON.parse(saved);
-    Object.assign(schedules, loadedSchedules);
-    const keys = Object.keys(schedules);
-    currentSchedule = keys.length > 0 ? keys[0] : "일정 1";
-    renderTabs();
-    renderDays();
-    alert('불러오기 완료!');
-  } else {
-    alert('저장된 일정이 없습니다.');
-  }
+  const currentData = JSON.parse(JSON.stringify(schedules[currentSchedule]));
+  schedules["나의 일정"] = currentData;
+
+  alert("현재 일정이 '나의 일정'에 저장되었습니다.");
+  renderTabs();
 }
 
 // -------------- 초기화 -------------

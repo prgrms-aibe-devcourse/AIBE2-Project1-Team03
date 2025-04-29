@@ -2,7 +2,7 @@
 body {
     margin: 0;
     font-family: 'Pretendard', sans-serif;
-    background: #ecece8;
+    background: #f3f5f5;
     color: #333;
   }
   
@@ -205,3 +205,24 @@ body {
   .tab-close:hover {
     color: #e63946;
   }
+
+  /* 오른쪽 탭 그룹 컨테이너 */
+.tab-group-right {
+  margin-left: auto;
+  display: flex;
+  gap: 10px;
+}
+
+/* 나의 일정 탭 전용 스타일 */
+.my-schedule-tab {
+  background-color: #c5a1de;
+  color: white;
+}
+
+.my-schedule-tab:hover {
+  background-color: #a772d2;
+}
+
+.my-schedule-tab.active {
+  background-color: #a772d2;
+}

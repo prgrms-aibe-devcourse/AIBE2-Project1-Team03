@@ -43,6 +43,20 @@
     </section>
   </main>
 
+  <script>
+    fetch('navbar.html')
+      .then(response => response.text())
+      .then(html => {
+        document.getElementById('navbar-container').innerHTML = html;
+      })
+      .then(() => {
+        const script = document.createElement('script');
+        script.type = 'module';
+        script.src = '../js/navbar.js';
+        document.body.appendChild(script);
+      });
+  </script>
+  
   <script src="../js/plan.js"></script>
   <script>
     fetch('navbar.html')

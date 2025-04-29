@@ -186,6 +186,10 @@ body {
   .tab:hover {
     background-color: #ddd;
   }
+
+  .tab.active:not(.my-schedule-tab) {
+    background-color: #ddd;
+  }
   
   .add-tab {
     background-color: #d5c6e0;

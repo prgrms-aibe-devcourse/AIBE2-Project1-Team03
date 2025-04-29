@@ -80,7 +80,7 @@ function renderUserInfo(data, uid) {
         : `<p>프로필 이미지가 없습니다.</p>`}
     </div>
     <input type="file" id="profile-img-upload">
-    <button id="upload-profile-btn">프로필 이미지 업로드</button>
+    <button id="upload-profile-btn" class="upload-profile-btn" >프로필 이미지 업로드</button>
 
     <div class="info-item">
       <span class="label">이름:</span>

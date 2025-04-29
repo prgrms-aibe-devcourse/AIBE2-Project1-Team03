@@ -200,6 +200,7 @@ body {
     border: none;
     border-radius: 8px;
     cursor: pointer;
+    font-weight: bold;
     transition: background-color 0.3s ease;
   }
   
@@ -216,6 +217,7 @@ body {
     margin-bottom: 30px;
     color: #333;
     font-size: 32px;
+
     border-bottom: 1px solid #ddd;
     padding-bottom: 10px;
    
@@ -236,6 +238,7 @@ body {
     border: none;
     border-radius: 10px;
     font-size: 16px;
+    font-weight: bold;
     cursor: pointer;
     transition: background-color 0.3s ease;
   }
@@ -253,6 +256,7 @@ body {
     border: none;
     border-radius: 10px;
     font-size: 16px;
+    font-weight: bold;
     cursor: pointer;
     transition: background-color 0.3s ease;
   }
@@ -302,6 +306,26 @@ body {
     border-radius: 50%;
     border: 2px solid #8e9aaf;
   }
+
+  .upload-profile-btn {
+    margin-top: 15px;
+    padding: 12px 24px;
+    background-color: #aad4c7;   /* 은은한 민트색 */
+    color: white;
+    border: none;
+    border-radius: 999px;         /* 완전 둥글게 */
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);  /* 약한 그림자 */
+  }
+  
+  .upload-profile-btn:hover {
+    background-color: #88c0b0;   /* 호버할 때 좀 더 진하게 */
+  }
+
+
 
   /*모달 스타일*/
   .modal-overlay {

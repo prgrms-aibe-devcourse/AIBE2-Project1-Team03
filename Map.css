@@ -1,0 +1,368 @@
+/* 기본 스타일 */
+body {
+  margin: 0; padding: 0;
+  font-family: 'Noto Sans', sans-serif;
+  overflow-x: hidden;
+  background: #fafafa;
+}
+#map-container {
+  margin-left: 200px;
+  margin-top: 250px;
+  width: calc(100% - 200px);
+  max-width: 10000px;
+}
+svg path:hover {
+  fill: orange;
+  cursor: pointer;
+  transition: fill 0.3s;
+}
+
+/* 오른쪽 사이드 패널 */
+.side-panel {
+  position: absolute;
+  top: 50px;
+  right: -55%;
+  width: 50%;
+  height: 90%;
+  background-color: aqua;
+  transition: right 0.5s ease-in-out;
+  display: flex;
+  flex-direction: column;
+  border-radius: 5% 0 0 5%;
+  box-shadow: 0 0 15px rgba(0,0,0,0.2);
+  overflow: hidden;
+  z-index: 1000;
+}
+.side-panel.open {
+  right: 0;
+}
+.info-wrapper {
+  display: flex;
+  height: 10%;
+}
+#contry_info{
+  background-color: aqua;
+  width: 50%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  padding-left: 1rem;
+  box-sizing: border-box;
+}
+#contry_info img {
+  width: 40%;
+  height: 100%;
+  border-radius: 5% 0 0 0;
+  object-fit: contain;
+  margin-right: 1rem;
+}
+#contry_info p {
+  font-size: 20px;
+  margin: 0;
+  font-weight: 700;
+  color: #333;
+}
+#weather {
+  display: block !important;
+  white-space: normal;
+}
+
+.weather-block {
+  display: block;
+}
+
+.weather-row {
+  display: block;
+  margin: 4px 0;
+  font-size: 16px;
+  color: #333;
+}
+
+.weather-row img {
+  vertical-align: middle;
+  width: 40px;
+  height: 40px;
+  margin-right: 6px;
+}
+
+#tourist {
+  flex: 1;
+  overflow-y: auto;
+  background-color: #dd8787;
+  padding: 10px;
+  box-sizing: border-box;
+}
+
+/* 하단 예산 및 후기 영역 */
+.under-wrapper {
+  display: flex;
+  height: 10%;
+  background: aqua;
+  padding: 0 1rem;
+  box-sizing: border-box;
+  align-items: center;
+  overflow-x: hidden; /* 스크롤 방지 */
+  overflow-y: hidden;
+  white-space: nowrap; /* 줄바꿈 방지 */
+}
+#Budget {
+  flex: 3;
+  background-color: aqua;
+  border-radius: 0 0 0 5%;
+  padding: 10px;
+  box-sizing: border-box;
+  height: 100%;
+  overflow-x: hidden; /* 가로 스크롤 허용 */
+  overflow-y: hidden;
+  white-space: nowrap; /* 줄바꿈 방지 */
+}
+#review {
+  flex: 1;
+  padding: 10px;
+  text-align: center;
+  font-weight: 700;
+  font-size: 1.2rem;
+  color: #444;
+}
+
+/* 닫기 버튼 */
+#side-close {
+  position: absolute;
+  top: 10px;
+  right: 20px;
+  width: 30px;
+  height: 30px;
+  background-color: aqua;
+  color: black;
+  font-size: 40px;
+  font-weight: bold;
+  border: none;
+  border-radius: 50%;
+  cursor: pointer;
+  z-index: 999;
+  line-height: 30px;
+  text-align: center;
+}
+
+/* 관광지 카드 그리드 */
+.tourist-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  grid-template-rows: repeat(2, 90px);
+  gap: 150px 20px;
+  max-width: 900px;
+  margin: 70px auto 0 auto;
+}
+.tourist-card {
+  background: #f7f9fc;
+  border-radius: 8px;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.07);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 6px;
+  height: 200px;
+  min-width: 0;
+  min-height: 0;
+  position: relative;
+}
+.tourist-card img {
+  width: 80px;
+  height: 80px;
+  object-fit: cover;
+  border-radius: 6px;
+  margin-bottom: 8px;
+}
+.tourist-info h4 {
+  font-size: 14px;
+  margin: 0 0 4px 0;
+  font-weight: 600;
+  text-align: center;
+  overflow-wrap: break-word;
+}
+.tourist-info p {
+  font-size: 11px;
+  margin: 0;
+  color: #5f6c7b;
+  text-align: center;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  min-height: 28px;
+}
+.tourist-card.empty {
+  background: transparent;
+  box-shadow: none;
+}
+/* 두 번째 줄은 4칸만 차지 */
+.tourist-card:nth-child(n+6) {
+  grid-row: 2;
+}
+.tourist-card:nth-child(6) { grid-column: 1; }
+.tourist-card:nth-child(7) { grid-column: 2; }
+.tourist-card:nth-child(8) { grid-column: 3; }
+.tourist-card:nth-child(9) { grid-column: 4; }
+
+/* 예산 패널 (한 줄 좌우 배치) */
+.budget-inline-panel {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18px;
+  width: 100%;
+  padding: 0 8px;
+  font-size: 1.1em;
+  flex-wrap: nowrap;
+}
+.budget-title {
+  font-weight: bold;
+  font-size: 1.1em;
+  white-space: nowrap;
+}
+.budget-inline-row {
+  display: flex;
+  gap: 16px;
+}
+.icon-box {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  min-width: 60px;
+}
+.icon {
+  width: 28px;
+  height: 28px;
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+}
+.icon-box.hotel .icon {
+  background-image: url('https://cdn-icons-png.flaticon.com/512/139/139899.png');
+}
+.icon-box.bus .icon {
+  background-image: url('https://cdn-icons-png.flaticon.com/512/3626/3626501.png');
+}
+.icon-box.food .icon {
+  background-image: url('https://cdn-icons-png.flaticon.com/512/1046/1046784.png');
+}
+.price {
+  font-weight: bold;
+  font-size: 0.95em;
+  color: #222;
+}
+.budget-total-label {
+  font-size: 0.97em;
+  color: #555;
+  margin-left: 8px;
+  white-space: nowrap;
+}
+.budget-total-amount {
+  font-size: 1.1em;
+  font-weight: bold;
+  color: #1976d2;
+  margin-left: 4px;
+  white-space: nowrap;
+}
+
+/* 왼쪽 사이드 패널 */
+.left-side-panel {
+  position: fixed;
+  top: 0;
+  left: -55%;
+  width: 50%;
+  height: 100%;
+  background: #f8f9fa;
+  box-shadow: 2px 0 8px rgba(0,0,0,0.08);
+  transition: left 0.5s;
+  z-index: 1002;
+  display: flex;
+  flex-direction: column;
+  padding: 24px 16px;
+}
+.left-side-panel.open {
+  left: 0;
+}
+#left-side-close {
+  position: absolute;
+  top: 10px;
+  right: 20px;
+  background: #e0e0e0;
+  border: none;
+  border-radius: 50%;
+  font-size: 28px;
+  cursor: pointer;
+}
+#left-map-container {
+  width: 100%;
+  height: 220px;
+  margin-bottom: 18px;
+  margin-top: 40px;
+  background: #d6eaff;
+  border-radius: 8px;
+}
+#itinerary-list {
+  flex: 1;
+  overflow-y: auto;
+}
+#generate-itinerary-btn {
+  position: absolute;
+  right: 16px;
+  bottom: 100px;
+  width: 100px;
+  height: 30px;
+  font-size: 13px;
+  padding: 4px 6px;
+  background: #1976d2;
+  color: #fff;
+  border: none;
+  border-radius: 7px;
+  cursor: pointer;
+  z-index: 10;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.13);
+  transition: background 0.2s;
+}
+#generate-itinerary-btn:hover {
+  background: #145ea8;
+}
+.add-to-itinerary {
+  align-self: flex-start;
+  padding: 3px 10px;
+  font-size: 12px;
+  background: #1976d2;
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  margin-top: 4px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.add-to-itinerary:hover {
+  background: #145ea8;
+}
+
+/* 반응형 예시 */
+@media (max-width: 900px) {
+  #map-container {
+    margin-left: 0;
+    margin-top: 150px;
+    width: 100%;
+  }
+  .side-panel {
+    width: 90%;
+    right: -100%;
+  }
+  .side-panel.open {
+    right: 5%;
+  }
+  .left-side-panel {
+    width: 90%;
+    left: -100%;
+  }
+  .left-side-panel.open {
+    left: 5%;
+  }
+}

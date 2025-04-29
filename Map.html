@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link rel="stylesheet" href="Map.css">
+<title>World Map Travel Planner</title>
+</head>
+<body>
+  <div id="map-container"></div>
+
+  <aside id="sidePanel" class="side-panel" aria-label="국가 정보 및 관광지">
+    <div class="info-wrapper" role="region" aria-label="국가 정보 및 날씨">
+      <div class="side-menu" id="contry_info" aria-live="polite"></div>
+      <div class="side-menu" id="weather" aria-live="polite"></div>
+    </div>
+    <button id="side-close" aria-label="사이드 패널 닫기">✕</button>
+    <div class="tourist-container" id="tourist" aria-live="polite"></div>
+    <button id="generate-itinerary-btn" class="itinerary-btn" aria-label="일정 생성">일정생성</button>
+    <div class="under-wrapper">
+      <div class="side-menu" id="Budget" aria-live="polite"></div>
+      <div class="side-menu" id="review"><h1>후기로 이동</h1></div>
+    </div>
+  </aside>
+
+  <aside id="leftSidePanel" class="left-side-panel" aria-label="일정 패널">
+    <button id="left-side-close" aria-label="일정 패널 닫기">✕</button>
+    <div id="left-map-container"></div>
+    <div id="itinerary-list"></div>
+  </aside>
+
+  <script src="https://maps.googleapis.com/maps/api/js?key=google api"></script>
+  <script src="Map.js"></script>
+</body>
+</html>

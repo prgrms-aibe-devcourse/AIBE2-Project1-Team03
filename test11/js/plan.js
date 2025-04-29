@@ -86,6 +86,16 @@ function renderTabs() {
   
 }
 
+// '?schedule=나의 일정'이 포함되어 있으면 "나의 일정" 탭을 자동으로 선택
+function getURLScheduleParam() {
+  const params = new URLSearchParams(window.location.search);
+  return params.get('schedule');
+}
+
+const urlSchedule = getURLScheduleParam();
+if (urlSchedule && schedules[urlSchedule]) {
+  currentSchedule = urlSchedule;
+}
 
 // -------------- 탭 전환 -------------
 // 특정 탭으로 이동

@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>여행 일정</title>
+  <link rel="stylesheet" href="../css/style.css">
+  <link rel="stylesheet" href="../css/plan.css">
+</head>
+<body>
+
+  <!-- 네비게이션 바 삽입 -->
+  <div id="navbar-container"></div>
+
+  <header>
+    <h1>여행 일정</h1>
+  </header>
+
+  <main class="plan-main">
+    <section class="plan-section">
+
+      <div class="tabs-container" id="tabs-container">
+        <!-- 탭 영역 -->
+      </div>
+
+      <div class="controls">
+        <div class="left-controls">
+          <button id="add-day-button">Day 추가</button>
+        </div>
+        <div class="right-controls">
+          <select id="day-select"></select>
+          <input type="text" id="destination-input" placeholder="새 목적지 입력">
+          <button id="add-button">추가</button>
+          <button id="save-button">저장</button>
+          <button id="load-button">불러오기</button>
+        </div>
+      </div>
+
+      <div id="days-container">
+        <!-- Day 묶음이 여기에 렌더링 -->
+      </div>
+
+    </section>
+  </main>
+
+  <script src="../js/plan.js"></script>
+  <script>
+    fetch('navbar.html')
+      .then(response => response.text())
+      .then(html => {
+        document.getElementById('navbar-container').innerHTML = html;
+      });
+  </script>
+
+</body>
+</html>

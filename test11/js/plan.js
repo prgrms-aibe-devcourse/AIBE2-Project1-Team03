@@ -14,7 +14,73 @@ const destinationInput = document.getElementById('destination-input');
 const addButton = document.getElementById('add-button');
 const addDayButton = document.getElementById('add-day-button');
 const saveButton = document.getElementById('save-button');
-const loadButton = document.getElementById('load-button');
+
+// Firestore 인스턴스 생성
+const db = firebase.firestore();
+
+// 로그인 시 일정 로드
+firebase.auth().onAuthStateChanged(user => {
+  if (!user) {
+    window.location.replace("login.html");
+  } else {
+    document.body.hidden = false;
+    loadItinerary(user.uid);
+  }
+});
+
+// Firestore에서 일정 불러오기
+async function loadItinerary(uid) {
+  try {
+    const snapshot = await db
+      .collection("users")
+      .doc(uid)
+      .collection("itineraries")
+      .orderBy("createdAt", "asc")
+      .get();
+    if (snapshot.empty) {
+      // 기본 일정 생성
+      schedules["일정 1"] = {
+        daysData: { "Day 1": [] },
+        daysOrder: ["Day 1"],
+        dayCount: 1
+      };
+      currentSchedule = "일정 1";
+    } else {
+      let count = 1;
+
+      snapshot.forEach(doc => {
+        const data = doc.data();
+        const scheduleName = `일정 ${count++}`;
+
+        const days = {};
+        const order = [];
+
+        if (data.days) {
+          data.days.forEach(dayObj => {
+            const dayName = `Day ${dayObj.day}`;
+            order.push(dayName);
+            days[dayName] = dayObj.places || [];
+          });
+
+          schedules[scheduleName] = {
+            daysData: days,
+            daysOrder: order,
+            dayCount: order.length
+          };
+
+          currentSchedule = scheduleName;
+        }
+      });
+    }
+
+    renderTabs();
+    renderDays();
+
+  } catch (error) {
+    console.error("일정 불러오기 오류:", error);
+    alert("일정을 불러오는 중 오류가 발생했습니다.");
+  }
+}
 
 // 드래그 기능에서 사용되는 전역 변수
 let draggedItem = null;
@@ -30,10 +96,31 @@ function renderTabs() {
     const tab = document.createElement('button');
     tab.className = 'tab';
 
+
     const nameSpan = document.createElement('span');
     nameSpan.textContent = scheduleName;
     nameSpan.style.flexGrow = '1';
+
+    // ✅ 일정 탭 전환
     nameSpan.onclick = () => switchTab(scheduleName);
+
+    // ✅ 일정 이름 더블클릭으로 수정
+    nameSpan.ondblclick = () => {
+      const newName = prompt("일정 이름을 수정하세요:", scheduleName);
+      if (newName && newName !== scheduleName) {
+        // 기존 데이터를 새 키로 복사하고 기존 삭제
+        schedules[newName] = schedules[scheduleName];
+        delete schedules[scheduleName];
+
+        // 현재 탭도 반영
+        if (currentSchedule === scheduleName) {
+          currentSchedule = newName;
+        }
+
+        renderTabs();
+        renderDays();
+      }
+    };
     
     const closeBtn = document.createElement('span');
     closeBtn.className = 'tab-close';
@@ -214,11 +301,22 @@ function createDestinationElement(day, dest) {
   const nameDiv = document.createElement('div');
   nameDiv.className = 'destination-name';
 
-  if (dest.tag) {
+  if (dest.type) {
     const tagBadge = document.createElement('span');
-    tagBadge.className = 'tag-badge';
-    tagBadge.textContent = dest.tag;
+    tagBadge.className = `type-badge ${getTypeClass(dest.type)}`;
+    tagBadge.textContent = dest.type;
     nameDiv.appendChild(tagBadge);
+  }
+
+  function getTypeClass(type) {
+    switch (type) {
+      case "출발": return "type-start";
+      case "도착": return "type-end";
+      case "식당": return "type-restaurant";
+      case "관광지": return "type-attraction";
+      case "숙소": return "type-hotel";
+      default: return ""; // 지정되지 않은 타입
+    }
   }
 
   const nameText = document.createElement('span');
@@ -271,9 +369,9 @@ function addDestination() {
   const day = daySelect.value;
   const name = destinationInput.value.trim();
   if (!name) return;
-  const tag = prompt('태그를 입력하세요 (예: 맛집, 명소 등):', '') || '';
+  const type = prompt('태그를 입력하세요 (출발, 도착, 관광지, 식당, 숙소):', '') || '';
   const address = prompt('주소를 입력하세요:', '') || '';
-  schedules[currentSchedule].daysData[day].push({ name, tag, address });
+  schedules[currentSchedule].daysData[day].push({ name, type, address });
   destinationInput.value = '';
   renderDays();
 }
@@ -335,8 +433,8 @@ function deleteDay(day) {
 function editDestination(day, dest) {
   const newName = prompt('목적지 이름 수정:', dest.name);
   if (newName) dest.name = newName;
-  const newTag = prompt('태그 수정:', dest.tag);
-  if (newTag) dest.tag = newTag;
+  const newTag = prompt('태그 수정:', dest.type);
+  if (newTag) dest.type = newType;
   const newAddress = prompt('주소 수정:', dest.address || '');
   if (newAddress !== null) dest.address = newAddress;
   renderDays();
@@ -492,5 +590,6 @@ function initialize() {
 
 addButton.addEventListener('click', addDestination);
 addDayButton.addEventListener('click', addDay);
+
 
 initialize();

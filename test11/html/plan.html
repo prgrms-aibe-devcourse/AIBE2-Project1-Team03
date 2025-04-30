@@ -6,9 +6,30 @@
   <title>여행 일정</title>
   <link rel="stylesheet" href="../css/style.css">
   <link rel="stylesheet" href="../css/plan.css">
-</head>
-<body>
 
+  <!-- ✅ Firebase compat SDK (v10.8.0) -->
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
+  
+  <!-- ✅ Firebase 초기화 -->
+  <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyDyIGwUGgnoVIPXe4HINkYhZzYOT_B8xzo",
+      authDomain: "aibe-3.firebaseapp.com",
+      projectId: "aibe-3",
+      storageBucket: "aibe-3.firebasestorage.app",
+      messagingSenderId: "303637126000",
+      appId: "1:303637126000:web:d9d568d321334eeffa8db5",
+      measurementId: "G-SY2NP4BGFC"
+    };
+    firebase.initializeApp(firebaseConfig);
+  </script>
+  
+</head>
+  
+<!-- ✅ 초기엔 화면 숨김 -->
+<body hidden>
+  
   <!-- 네비게이션 바 삽입 -->
   <div id="navbar-container"></div>
 
@@ -42,9 +63,25 @@
     </section>
   </main>
 
+  <!-- ✅ 로그인 여부 확인 후 body 표시 -->
+  <script>
+    window.addEventListener('load', () => {
+      firebase.auth().onAuthStateChanged(user => {
+        if (!user) {
+          console.warn("로그인 안됨 → login.html로 이동");
+          window.location.replace("login.html");
+        } else {
+          console.log("로그인 성공:", user.email);
+          document.body.hidden = false;
+        }
+      });
+    });
+  </script>
+
+  <!-- ✅ navbar 불러오기 -->
   <script>
     fetch('navbar.html')
-      .then(response => response.text())
+      .then(res => res.text())
       .then(html => {
         document.getElementById('navbar-container').innerHTML = html;
       })

@@ -139,14 +139,36 @@ body {
     border: 2px dashed #4caf50;
   }
   
-  .tag-badge {
+  .type-badge {
     display: inline-block;
-    background-color: #ffc131;
-    color: #ffffff;
     font-size: 0.75em;
     padding: 2px 8px;
     border-radius: 10px;
     margin-right: 8px;
+    color: #fff;
+  }
+  
+  /* 출발 / 도착 */
+  .type-start {
+    background-color: #4caf50; /* 녹색 */
+  }
+  .type-end {
+    background-color: #1e88e5; /* 파랑 */
+  }
+  
+  /* 식당 */
+  .type-restaurant {
+    background-color: #ff7043; /* 주황 */
+  }
+  
+  /* 관광지 */
+  .type-attraction {
+    background-color: #ab47bc; /* 보라 */
+  }
+  
+  /* 숙소 */
+  .type-hotel {
+    background-color: #6d4c41; /* 갈색 */
   }
   
   button.delete {

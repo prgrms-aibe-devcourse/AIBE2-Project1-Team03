@@ -1,47 +1,438 @@
 {
-    "country": "AL",
-    "places": [
-      {
-        "name": "베라트 성",
-        "latitude": 40.7056,
-        "longitude": 19.9522,
-        "image": "https://upload.wikimedia.org/wikipedia/commons/9/92/Berat_Castle_view.jpg"
-      },
-      {
-        "name": "부트린트 유적지",
-        "latitude": 39.7455,
-        "longitude": 20.0198,
-        "image": "https://upload.wikimedia.org/wikipedia/commons/a/a7/Butrint_Theatre.jpg"
-      },
-      {
-        "name": "크루야 성",
-        "latitude": 41.5096,
-        "longitude": 19.7923,
-        "image": "https://upload.wikimedia.org/wikipedia/commons/2/2d/Kruja_Castle.jpg"
-      },
-      {
-        "name": "사란데 해변",
-        "latitude": 39.8756,
-        "longitude": 20.0055,
-        "image": "https://upload.wikimedia.org/wikipedia/commons/2/2c/Saranda_Beach.jpg"
-      },
-      {
-        "name": "로가라 패스",
-        "latitude": 40.1889,
-        "longitude": 19.6406,
-        "image": "https://upload.wikimedia.org/wikipedia/commons/e/e8/Llogara_Pass_Albania.jpg"
-      },
-      {
-        "name": "지로카스터 올드타운",
-        "latitude": 40.0758,
-        "longitude": 20.1388,
-        "image": "https://upload.wikimedia.org/wikipedia/commons/1/1b/Gjirokaster_Old_Town.jpg"
-      },
-      {
-        "name": "시드라수 강",
-        "latitude": 40.1441,
-        "longitude": 20.0268,
-        "image": "https://upload.wikimedia.org/wikipedia/commons/2/22/Blue_Eye_Syri_i_Kalter_Saranda.jpg"
-      }
-    ]
+  "KR": [
+    {
+      "name": "경복궁",
+      "lat": 37.579617,
+      "lng": 126.977041,
+      "img": "assets/images/경복궁.jpg",
+      "desc": "서울의 대표 고궁"
+    },
+    {
+      "name": "남산타워",
+      "lat": 37.551169,
+      "lng": 126.988227,
+      "img": "assets/images/남산타워.webp",
+      "desc": "서울의 전망 명소"
+    },
+    {
+      "name": "북촌한옥마을",
+      "lat": 37.582604,
+      "lng": 126.983998,
+      "img": "assets/images/북촌한옥마을.jpg",
+      "desc": "전통 한옥이 모여있는 마을"
+    },
+    {
+      "name": "명동",
+      "lat": 37.563757,
+      "lng": 126.982684,
+      "img": "assets/images/명동.jpg",
+      "desc": "서울의 대표 쇼핑 거리"
+    },
+    {
+      "name": "인사동",
+      "lat": 37.574018,
+      "lng": 126.984922,
+      "img": "assets/images/인사동.jpg",
+      "desc": "문화 예술 거리"
+    },
+    {
+      "name": "한강공원",
+      "lat": 37.541,
+      "lng": 126.988,
+      "img": "assets/images/한강공원.jpg",
+      "desc": "도심 속 휴식 공간"
+    },
+    {
+      "name": "롯데월드",
+      "lat": 37.5111,
+      "lng": 127.098,
+      "img": "assets/images/롯데월드.jpg",
+      "desc": "대형 테마파크"
+    },
+    {
+      "name": "광화문광장",
+      "lat": 37.5759,
+      "lng": 126.9769,
+      "img": "assets/images/광화문광장.jpg",
+      "desc": "서울 중심의 역사적 광장"
+    },
+    {
+      "name": "이태원",
+      "lat": 37.534,
+      "lng": 126.994,
+      "img": "assets/images/이태원.jpg",
+      "desc": "다문화 거리"
+    },
+    {
+      "name": "청계천",
+      "lat": 37.570,
+      "lng": 126.976,
+      "img": "assets/images/청계천.jpg",
+      "desc": "도심 속 개천 산책로"
+    }
+  ],
+  "IT": [
+    {
+      "name": "콜로세움",
+      "lat": 41.8902,
+      "lng": 12.4922,
+      "img": "assets/images/콜로세움.jpg",
+      "desc": "로마의 고대 원형 경기장"
+    },
+    {
+      "name": "베네치아 산마르코 광장",
+      "lat": 45.4342,
+      "lng": 12.3388,
+      "img": "assets/images/산마르코.jpg",
+      "desc": "베네치아의 중심 광장"
+    },
+    {
+      "name": "피렌체 두오모",
+      "lat": 43.7731,
+      "lng": 11.2556,
+      "img": "assets/images/피렌체두오모.jpg",
+      "desc": "피렌체의 대표 대성당"
+    },
+    {
+      "name": "피사의 사탑",
+      "lat": 43.7230,
+      "lng": 10.3966,
+      "img": "assets/images/피사의사탑.jpg",
+      "desc": "기울어진 탑으로 유명"
+    },
+    {
+      "name": "밀라노 두오모",
+      "lat": 45.4642,
+      "lng": 9.1900,
+      "img": "assets/images/밀라노두오모.jpg",
+      "desc": "밀라노의 대성당"
+    },
+    {
+      "name": "폼페이 유적지",
+      "lat": 40.7500,
+      "lng": 14.5000,
+      "img": "assets/images/폼페이.jpg",
+      "desc": "고대 로마 도시 유적"
+    },
+    {
+      "name": "아말피 해안",
+      "lat": 40.6333,
+      "lng": 14.6029,
+      "img": "assets/images/아말피.jpg",
+      "desc": "이탈리아 남부의 절경 해안"
+    },
+    {
+      "name": "카프리 섬",
+      "lat": 40.5532,
+      "lng": 14.2222,
+      "img": "assets/images/카프리섬.jpg",
+      "desc": "지중해의 아름다운 섬"
+    },
+    {
+      "name": "시에나 구시가지",
+      "lat": 43.3188,
+      "lng": 11.3308,
+      "img": "assets/images/시에나.jpg",
+      "desc": "중세 도시의 매력"
+    },
+    {
+      "name": "베로나 아레나",
+      "lat": 45.4386,
+      "lng": 10.9940,
+      "img": "assets/images/베로나.jpg",
+      "desc": "고대 로마 원형극장"
+    }
+  ],
+  "US": [
+    {
+      "name": "자유의 여신상",
+      "lat": 40.6892,
+      "lng": -74.0445,
+      "img": "assets/images/자유의여신상.jpg",
+      "desc": "뉴욕의 상징"
+    },
+    {
+      "name": "그랜드 캐니언",
+      "lat": 36.1069,
+      "lng": -112.1129,
+      "img": "assets/images/그랜드캐니언.jpg",
+      "desc": "미국의 대표 자연경관"
+    },
+    {
+      "name": "옐로스톤 국립공원",
+      "lat": 44.4280,
+      "lng": -110.5885,
+      "img": "assets/images/옐로스톤.jpg",
+      "desc": "세계 최초의 국립공원"
+    },
+    {
+      "name": "라스베이거스 스트립",
+      "lat": 36.1147,
+      "lng": -115.1728,
+      "img": "assets/images/라스베이거스.jpg",
+      "desc": "미국의 대표적인 엔터테인먼트 거리"
+    },
+    {
+      "name": "타임스퀘어",
+      "lat": 40.7580,
+      "lng": -73.9855,
+      "img": "assets/images/타임스퀘어.jpg",
+      "desc": "뉴욕의 중심 광장"
+    },
+    {
+      "name": "골든게이트 브리지",
+      "lat": 37.8199,
+      "lng": -122.4783,
+      "img": "assets/images/골든게이트.jpg",
+      "desc": "샌프란시스코의 상징"
+    },
+    {
+      "name": "나이아가라 폭포",
+      "lat": 43.0962,
+      "lng": -79.0377,
+      "img": "assets/images/나이아가라.jpg",
+      "desc": "미국-캐나다 국경의 대폭포"
+    },
+    {
+      "name": "월트 디즈니 월드",
+      "lat": 28.3852,
+      "lng": -81.5639,
+      "img": "assets/images/디즈니.jpg",
+      "desc": "세계 최대의 테마파크"
+    },
+    {
+      "name": "알래스카 데날리",
+      "lat": 63.0695,
+      "lng": -151.0074,
+      "img": "assets/images/알래스카데날리.jpg",
+      "desc": "북미 최고봉"
+    },
+    {
+      "name": "알카트라즈 섬",
+      "lat": 37.8267,
+      "lng": -122.4230,
+      "img": "assets/images/알카트라즈.jpg",
+      "desc": "역사적인 감옥섬"
+    }
+  ],
+  "JP": [
+  {
+    "name": "도쿄타워",
+    "lat": 35.658581,
+    "lng": 139.745438,
+    "img": "assets/images/도쿄타워.jpg",
+    "desc": "도쿄의 랜드마크 타워"
+  },
+  {
+    "name": "아사쿠사",
+    "lat": 35.714765,
+    "lng": 139.796655,
+    "img": "assets/images/아사쿠사.jpg",
+    "desc": "전통 사원과 상점가가 있는 지역"
+  },
+  {
+    "name": "시부야 교차로",
+    "lat": 35.659487,
+    "lng": 139.700044,
+    "img": "assets/images/시부야교차로.jpg",
+    "desc": "세계에서 가장 분주한 교차로"
+  },
+  {
+    "name": "우에노 공원",
+    "lat": 35.715298,
+    "lng": 139.774054,
+    "img": "assets/images/우에노공원.jpg",
+    "desc": "벚꽃 명소와 박물관들이 모여있는 공원"
+  },
+  {
+    "name": "긴자",
+    "lat": 35.6717,
+    "lng": 139.7649,
+    "img": "assets/images/긴자.jpg",
+    "desc": "고급 쇼핑가와 레스토랑 거리"
+  },
+  {
+    "name": "메이지 신궁",
+    "lat": 35.6764,
+    "lng": 139.6993,
+    "img": "assets/images/메이지신궁.jpg",
+    "desc": "도심 속 조용한 신사"
+  },
+  {
+    "name": "롯폰기 힐즈",
+    "lat": 35.6605,
+    "lng": 139.7292,
+    "img": "assets/images/롯폰기힐즈.jpg",
+    "desc": "현대적인 복합 문화 공간"
+  },
+  {
+    "name": "도쿄 디즈니랜드",
+    "lat": 35.6329,
+    "lng": 139.8804,
+    "img": "assets/images/도쿄디즈니랜드.jpg",
+    "desc": "가족 여행 명소 테마파크"
+  },
+  {
+    "name": "하라주쿠",
+    "lat": 35.6702,
+    "lng": 139.702,
+    "img": "assets/images/하라주쿠.jpg",
+    "desc": "젊음과 패션의 거리"
+  },
+  {
+    "name": "시나가와 수족관",
+    "lat": 35.609,
+    "lng": 139.7387,
+    "img": "assets/images/시나가와수족관.jpg",
+    "desc": "도심 속 해양 생물 체험 공간"
   }
+],
+"FR": [
+  {
+    "name": "에펠탑",
+    "lat": 48.858370,
+    "lng": 2.294481,
+    "img": "assets/images/에펠탑.jpg",
+    "desc": "파리의 상징이자 세계적인 랜드마크"
+  },
+  {
+    "name": "루브르 박물관",
+    "lat": 48.860611,
+    "lng": 2.337644,
+    "img": "assets/images/루브르박물관.jpg",
+    "desc": "세계 최대의 미술관"
+  },
+  {
+    "name": "몽생미셸",
+    "lat": 48.636063,
+    "lng": -1.511457,
+    "img": "assets/images/몽생미셸.jpg",
+    "desc": "바다 위의 신비로운 수도원"
+  },
+  {
+    "name": "베르사유 궁전",
+    "lat": 48.804865,
+    "lng": 2.120355,
+    "img": "assets/images/베르사유궁전.jpg",
+    "desc": "프랑스 왕실의 화려한 궁전"
+  },
+  {
+    "name": "노트르담 대성당",
+    "lat": 48.852968,
+    "lng": 2.349902,
+    "img": "assets/images/노트르담대성당.jpg",
+    "desc": "고딕 건축의 걸작"
+  },
+  {
+    "name": "샹젤리제 거리",
+    "lat": 48.869867,
+    "lng": 2.307297,
+    "img": "assets/images/샹젤리제거리.jpg",
+    "desc": "파리의 대표적인 거리"
+  },
+  {
+    "name": "오르세 미술관",
+    "lat": 48.860000,
+    "lng": 2.326667,
+    "img": "assets/images/오르세미술관.jpg",
+    "desc": "인상파 작품이 가득한 미술관"
+  },
+  {
+    "name": "리옹 구시가지",
+    "lat": 45.762222,
+    "lng": 4.827778,
+    "img": "assets/images/리옹구시가지.jpg",
+    "desc": "프랑스 전통이 살아있는 도시"
+  },
+  {
+    "name": "니스 해변",
+    "lat": 43.695350,
+    "lng": 7.255970,
+    "img": "assets/images/니스해변.jpg",
+    "desc": "지중해의 아름다운 해변"
+  },
+  {
+    "name": "퐁피두 센터",
+    "lat": 48.860642,
+    "lng": 2.352245,
+    "img": "assets/images/퐁피두센터.jpg",
+    "desc": "현대 예술의 중심지"
+  }
+],
+"GB": [
+  {
+    "name": "버킹엄 궁전",
+    "lat": 51.501364,
+    "lng": -0.14189,
+    "img": "assets/images/버킹엄궁전.jpg",
+    "desc": "영국 왕실의 공식 거주지"
+  },
+  {
+    "name": "빅벤",
+    "lat": 51.500729,
+    "lng": -0.124625,
+    "img": "assets/images/빅벤.jpg",
+    "desc": "런던의 상징적인 시계탑"
+  },
+  {
+    "name": "타워 브리지",
+    "lat": 51.505456,
+    "lng": -0.075356,
+    "img": "assets/images/타워브리지.jpg",
+    "desc": "템스강을 가로지르는 유명한 다리"
+  },
+  {
+    "name": "런던 아이",
+    "lat": 51.503324,
+    "lng": -0.119543,
+    "img": "assets/images/런던아이.jpg",
+    "desc": "런던의 대관람차"
+  },
+  {
+    "name": "웨스트민스터 사원",
+    "lat": 51.499292,
+    "lng": -0.12731,
+    "img": "assets/images/웨스트민스터사원.jpg",
+    "desc": "영국 왕실의 대관식 장소"
+  },
+  {
+    "name": "대영 박물관",
+    "lat": 51.519413,
+    "lng": -0.126957,
+    "img": "assets/images/대영박물관.jpg",
+    "desc": "세계적인 역사 박물관"
+  },
+  {
+    "name": "코벤트 가든",
+    "lat": 51.51297,
+    "lng": -0.12471,
+    "img": "assets/images/코벤트가든.jpg",
+    "desc": "쇼핑과 공연이 유명한 거리"
+  },
+  {
+    "name": "세인트 폴 대성당",
+    "lat": 51.513845,
+    "lng": -0.098351,
+    "img": "assets/images/세인트폴대성당.jpg",
+    "desc": "런던의 대표적인 성당"
+  },
+  {
+    "name": "내셔널 갤러리",
+    "lat": 51.508929,
+    "lng": -0.128299,
+    "img": "assets/images/내셔널갤러리.jpg",
+    "desc": "세계적인 미술관"
+  },
+  {
+    "name": "캠든 마켓",
+    "lat": 51.5416,
+    "lng": -0.1464,
+    "img": "assets/images/캠든마켓.jpg",
+    "desc": "다양한 먹거리와 쇼핑 명소"
+  }
+]
+
+
+
+
+}

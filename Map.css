@@ -9,10 +9,9 @@ body {
   margin-left: 200px;
   margin-top: 250px;
   width: calc(100% - 200px);
-  max-width: 10000px;
 }
 svg path:hover {
-  fill: orange;
+  fill: rgb(104, 77, 27);
   cursor: pointer;
   transition: fill 0.3s;
 }
@@ -24,7 +23,7 @@ svg path:hover {
   right: -55%;
   width: 50%;
   height: 90%;
-  background-color: aqua;
+  background-color: rgb(240, 205, 141);
   transition: right 0.5s ease-in-out;
   display: flex;
   flex-direction: column;
@@ -41,7 +40,7 @@ svg path:hover {
   height: 10%;
 }
 #contry_info{
-  background-color: aqua;
+  background-color: rgb(240, 205, 141);
   width: 50%;
   height: 100%;
   display: flex;
@@ -62,6 +61,7 @@ svg path:hover {
   font-weight: 700;
   color: #333;
 }
+/* --- 날씨 --- */
 #weather {
   display: block !important;
   white-space: normal;
@@ -69,6 +69,8 @@ svg path:hover {
 
 .weather-block {
   display: block;
+  font-family: 'Noto Sans', sans-serif;
+  font-weight: bold;
 }
 
 .weather-row {
@@ -84,67 +86,19 @@ svg path:hover {
   height: 40px;
   margin-right: 6px;
 }
-
+/* --- 관광지 ---*/
 #tourist {
   flex: 1;
   overflow-y: auto;
-  background-color: #dd8787;
+  background-color: #cf9951;
   padding: 10px;
   box-sizing: border-box;
 }
-
-/* 하단 예산 및 후기 영역 */
-.under-wrapper {
-  display: flex;
-  height: 10%;
-  background: aqua;
-  padding: 0 1rem;
-  box-sizing: border-box;
-  align-items: center;
-  overflow-x: hidden; /* 스크롤 방지 */
-  overflow-y: hidden;
-  white-space: nowrap; /* 줄바꿈 방지 */
+.tourist-card.selected {
+  border: 2px solid #007bff;
+  background: #eaf4ff;
+  box-shadow: 0 0 6px #007bff55;
 }
-#Budget {
-  flex: 3;
-  background-color: aqua;
-  border-radius: 0 0 0 5%;
-  padding: 10px;
-  box-sizing: border-box;
-  height: 100%;
-  overflow-x: hidden; /* 가로 스크롤 허용 */
-  overflow-y: hidden;
-  white-space: nowrap; /* 줄바꿈 방지 */
-}
-#review {
-  flex: 1;
-  padding: 10px;
-  text-align: center;
-  font-weight: 700;
-  font-size: 1.2rem;
-  color: #444;
-}
-
-/* 닫기 버튼 */
-#side-close {
-  position: absolute;
-  top: 10px;
-  right: 20px;
-  width: 30px;
-  height: 30px;
-  background-color: aqua;
-  color: black;
-  font-size: 40px;
-  font-weight: bold;
-  border: none;
-  border-radius: 50%;
-  cursor: pointer;
-  z-index: 999;
-  line-height: 30px;
-  text-align: center;
-}
-
-/* 관광지 카드 그리드 */
 .tourist-grid {
   display: grid;
   grid-template-columns: repeat(5, 1fr);
@@ -168,8 +122,8 @@ svg path:hover {
   position: relative;
 }
 .tourist-card img {
-  width: 80px;
-  height: 80px;
+  width: 120px;
+  height: 120px;
   object-fit: cover;
   border-radius: 6px;
   margin-bottom: 8px;
@@ -206,7 +160,30 @@ svg path:hover {
 .tourist-card:nth-child(8) { grid-column: 3; }
 .tourist-card:nth-child(9) { grid-column: 4; }
 
+/* 하단 예산 및 후기 영역 */
+.under-wrapper {
+  display: flex;
+  height: 10%;
+  background: rgb(240, 205, 141);
+  padding: 0 1rem;
+  box-sizing: border-box;
+  align-items: center;
+  overflow-x: hidden; /* 스크롤 방지 */
+  overflow-y: hidden;
+  white-space: nowrap; /* 줄바꿈 방지 */
+}
 /* 예산 패널 (한 줄 좌우 배치) */
+#Budget {
+  flex: 3;
+  background-color: rgb(240, 205, 141);
+  border-radius: 0 0 0 5%;
+  padding: 10px;
+  box-sizing: border-box;
+  height: 100%;
+  overflow-x: hidden; /* 가로 스크롤 금지 */
+  overflow-y: hidden;
+  white-space: nowrap; /* 줄바꿈 방지 */
+}
 .budget-inline-panel {
   display: flex;
   align-items: center;
@@ -241,13 +218,13 @@ svg path:hover {
   background-position: center;
 }
 .icon-box.hotel .icon {
-  background-image: url('https://cdn-icons-png.flaticon.com/512/139/139899.png');
+  background-image: url('https://fonts.gstatic.com/s/i/materialicons/hotel/v17/24px.svg');
 }
 .icon-box.bus .icon {
   background-image: url('https://cdn-icons-png.flaticon.com/512/3626/3626501.png');
 }
 .icon-box.food .icon {
-  background-image: url('https://cdn-icons-png.flaticon.com/512/1046/1046784.png');
+  background-image: url('https://fonts.gstatic.com/s/i/materialicons/restaurant/v15/24px.svg');
 }
 .price {
   font-weight: bold;
@@ -256,16 +233,45 @@ svg path:hover {
 }
 .budget-total-label {
   font-size: 0.97em;
-  color: #555;
+  font-weight: bold;
+  color: #070000;
   margin-left: 8px;
   white-space: nowrap;
 }
 .budget-total-amount {
   font-size: 1.1em;
   font-weight: bold;
-  color: #1976d2;
-  margin-left: 4px;
+  color: #eb0707;
   white-space: nowrap;
+  text-align: left;
+}
+/*후기로 이동*/
+#review {
+  flex: 1;
+  padding: 10px;
+  text-align: center;
+  font-weight: 700;
+  font-size: 1.2rem;
+  color: #444;
+}
+
+/* 오른 패널 닫기 버튼 */
+#side-close {
+  position: absolute;
+  top: 10px;
+  right: 20px;
+  width: 30px;
+  height: 30px;
+  background-color: rgb(240, 205, 141);
+  color: black;
+  font-size: 40px;
+  font-weight: bold;
+  border: none;
+  border-radius: 50%;
+  cursor: pointer;
+  z-index: 999;
+  line-height: 30px;
+  text-align: center;
 }
 
 /* 왼쪽 사이드 패널 */
@@ -305,6 +311,7 @@ svg path:hover {
   border-radius: 8px;
 }
 #itinerary-list {
+  margin-top: 200px;
   flex: 1;
   overflow-y: auto;
 }
@@ -316,8 +323,8 @@ svg path:hover {
   height: 30px;
   font-size: 13px;
   padding: 4px 6px;
-  background: #1976d2;
-  color: #fff;
+  background: #b0e227;
+  color: #050000;
   border: none;
   border-radius: 7px;
   cursor: pointer;
@@ -326,7 +333,7 @@ svg path:hover {
   transition: background 0.2s;
 }
 #generate-itinerary-btn:hover {
-  background: #145ea8;
+  background: #d8a809;
 }
 .add-to-itinerary {
   align-self: flex-start;

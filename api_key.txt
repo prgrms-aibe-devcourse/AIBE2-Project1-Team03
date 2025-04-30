@@ -1,3 +1,3 @@
-날씨 api : 79fc9d5f205b88928b916382beacdf68 - (JS 104줄)
+날씨 api : 79fc9d5f205b88928b916382beacdf68 - (JS 98줄)
 opentrip api : 5ae2e3f221c38a28845f05b6b83cb1a3c450df4a7fe5d406b3d5b077 (JS 13줄)
 google api : AIzaSyBfeOZD9hcwVMkj7Vg7vGlughgxRdKQYAE (HTML 32줄)

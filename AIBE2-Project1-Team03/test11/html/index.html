@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ttttt</title>
+
+  <!--여행 기간을 위해 Litepicker 라이브러리를 불러오는 링크 -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/litepicker/dist/css/litepicker.css" />
+  <script src="https://cdn.jsdelivr.net/npm/litepicker/dist/bundle.js"></script>
+  <link rel="stylesheet" href="../css/style.css" />
+</head>
+<body>
+  <div id="navbar-container"></div>
+
+
+  <header>
+    
+    <h1>마음에 드는 여행지를 찾아보세요 ✈️</h1>
+  </header>
+  <main>
+    <div class="map-container">
+      <!-- SVG 지도 넣을 자리 -->
+      <object type="image/svg+xml" data="../img/world_map.svg" id="world-map"></object>
+    </div>
+
+      <!-- 여행 정보 입력 팝업창 -->
+      <div class="travel-popup">
+        <h3>여행 정보를 입력하세요</h3>
+  
+        <!-- 예산 입력 필드 -->
+        <input
+          type="number"
+          placeholder="예산을 입력하세요(만원)"
+          class="budget-input"
+          min="10"
+          max="1000"
+          step="100"
+        />
+
+  
+        <!-- 여행 스타일 제목 -->
+        <label class="popup-label">여행 스타일</label>
+  
+        <!-- 여행 스타일 체크박스 (힐링, 쇼핑, 휴양, 액티비티) -->
+        <div class="travel-style">
+          <label><input type="checkbox" name="style" value="힐링" /> 힐링</label>
+          <label><input type="checkbox" name="style" value="쇼핑" /> 쇼핑</label>
+          <label><input type="checkbox" name="style" value="휴양" /> 휴양</label>
+          <label><input type="checkbox" name="style" value="맛집" /> 맛집</label>
+          <label><input type="checkbox" name="style" value="액티비티" /> 액티비티</label>
+        </div>
+  
+        <!-- 여행 일수 선택 -->
+        <label class="popup-label">여행 기간 (일 수)</label>
+        <input
+          type="number"
+          id="trip-days"
+          class="date-input"
+          placeholder="예: 3"
+          min="1"
+          max="30"
+        />
+  
+        <!-- 나라 선택 제목 -->
+        <label class="popup-label" >원하는 나라 입력</label>
+      
+        <!-- 나라 입력 필드 -->
+        <input type="text" placeholder="예: 일본" class="country-input" />
+  
+        <!-- 제출 버튼 -->
+        <button class="submit-button">제출</button>
+      </div>
+
+    <div class="info-panel" id="info-panel">
+      <h2>국가 정보</h2>
+      <p>나라를 선택하세요!</p>
+    </div>
+  </main>
+
+
+  
+  <script>
+    fetch('navbar.html')
+      .then(response => response.text())
+      .then(html => {
+        document.getElementById('navbar-container').innerHTML = html;
+      })
+      .then(() => {
+        
+        const script = document.createElement('script');
+        script.type = 'module';
+        script.src = '../js/navbar.js';  // 로그인 처리하는 JS
+        document.body.appendChild(script);
+      });
+  </script>
+
+
+
+  <script src="../js/script.js"></script>
+</body>
+</html>

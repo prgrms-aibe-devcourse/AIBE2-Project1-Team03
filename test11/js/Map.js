@@ -8,6 +8,8 @@ import {
   serverTimestamp
 } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
 
+import { capitalKoMap } from './capital-ko-map.js'; 
+
 const firebaseConfig = {
   apiKey: "AIzaSyDyIGwUGgnoVIPXe4HINkYhZzYOT_B8xzo",
   authDomain: "aibe-3.firebaseapp.com",
@@ -33,7 +35,7 @@ let currentAirports = [];
 let markers = [];
 const googlePlacesKey = 'AIzaSyA5ueda7Qmq4m_agO069YgX82NkEhJCzRY';
 
-// 출발지: 인천공항
+// 출발지: 인천공항 지금은 이걸로 고정
 const departure = {
   type: '출발',
   name: '인천공항',
@@ -86,9 +88,14 @@ function setupMapClickEvents() {
 // ----------------- 사이드패널 열기/닫기 -----------------
 function open_slide(code) {
   document.getElementById('sidePanel').classList.add('open');
+
+  const countryName = new Intl.DisplayNames(['ko'], { type: 'region' }).of(code);
+  const rawCapital = capitalData[code] || '';
+  const capitalName = capitalKoMap[rawCapital] || rawCapital;
+
   document.getElementById('contry_info').innerHTML = `
     <img src="https://flagcdn.com/w80/${code.toLowerCase()}.png" alt="">
-    <p>${new Intl.DisplayNames(['ko'], { type: 'region' }).of(code)}</p>
+    <p>${countryName}${capitalName ? ` - ${capitalName}` : ''}</p>
   `;
 }
 function close_slide() {
@@ -417,6 +424,8 @@ function renderDayButtons(itin) {
 
 
 
+
+
 // ----------------- Day별 마커 표시 -----------------
 function showDayMarkers(dayIdx) {
   const itin = window.globalItinerary;
@@ -528,4 +537,10 @@ document.getElementById('save-itinerary-btn')
       console.error(err);
       alert('❌ 저장 중 오류가 발생했어요.');
     }
+  });
+
+
+  // ----------------- 후기 페이지 이동 -----------------
+  document.getElementById("review-btn").addEventListener("click", () => {
+    window.location.href = "/review.html"; // 후기 페이지 경로
   });

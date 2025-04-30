@@ -6,7 +6,7 @@ document.getElementById('search-btn').addEventListener('click', async () => {
 async function loadPlaces() {
   const city = document.getElementById('city-input').value.trim();
   if (!city) {
-    alert("도시 이름을 입력하세요!");
+    showAlert("도시 이름을 입력하세요!");
     return;
   }
 
@@ -62,4 +62,13 @@ document.getElementById('city-input').addEventListener('keydown', function (e) {
     if (e.key === 'Enter') {
       loadPlaces();
     }
+  });
+
+  /*경고창 모달*/
+  function showAlert(message) {
+    document.getElementById('alert-modal-message').textContent = message;
+    document.getElementById('alert-modal').style.display = 'flex';
+  }
+  document.getElementById('alert-modal-confirm-btn').addEventListener('click', () => {
+    document.getElementById('alert-modal').style.display = 'none';
   });

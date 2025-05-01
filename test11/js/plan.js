@@ -14,9 +14,38 @@ const destinationInput = document.getElementById('destination-input');
 const addButton = document.getElementById('add-button');
 const addDayButton = document.getElementById('add-day-button');
 const saveButton = document.getElementById('save-button');
+const scheduleNameToDocId = {}; // 일정이름 → Firestore 문서 ID 매핑
 
 // Firestore 인스턴스 생성
 const db = firebase.firestore();
+
+// Firestore 저장 함수 만들기
+async function saveToFirestore(scheduleName) {
+  const user = firebase.auth().currentUser;
+  if (!user) return;
+
+  const schedule = schedules[scheduleName];
+  if (!schedule) return;
+
+  // Firestore로 보낼 형식으로 재구성
+  const days = schedule.daysOrder.map(day => ({
+    day: parseInt(day.replace('Day ', '')),
+    places: schedule.daysData[day]
+  }));
+
+  const docId = scheduleNameToDocId[scheduleName] || scheduleName;
+
+  await db
+  .collection("users")
+  .doc(user.uid)
+  .collection("itineraries")
+  .doc(docId) // 문서 이름: 기존 ID를 유지하거나 새로
+  .set({
+    displayName: scheduleName,
+    days: days,
+    updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+  });
+}
 
 // 로그인 시 일정 로드
 firebase.auth().onAuthStateChanged(user => {
@@ -50,7 +79,8 @@ async function loadItinerary(uid) {
 
       snapshot.forEach(doc => {
         const data = doc.data();
-        const scheduleName = `일정 ${count++}`;
+        const displayName = data.displayName || `일정 ${count++}`;
+        scheduleNameToDocId[displayName] = doc.id;
 
         const days = {};
         const order = [];
@@ -62,13 +92,13 @@ async function loadItinerary(uid) {
             days[dayName] = dayObj.places || [];
           });
 
-          schedules[scheduleName] = {
+          schedules[displayName] = {
             daysData: days,
             daysOrder: order,
             dayCount: order.length
           };
-
-          currentSchedule = scheduleName;
+          
+          currentSchedule = displayName;
         }
       });
     }
@@ -96,39 +126,31 @@ function renderTabs() {
     const tab = document.createElement('button');
     tab.className = 'tab';
 
-
     const nameSpan = document.createElement('span');
     nameSpan.textContent = scheduleName;
     nameSpan.style.flexGrow = '1';
 
-    // ✅ 일정 탭 전환
+    // 일정 탭 전환
     nameSpan.onclick = () => switchTab(scheduleName);
 
-    // ✅ 일정 이름 더블클릭으로 수정
-    nameSpan.ondblclick = () => {
-      const newName = prompt("일정 이름을 수정하세요:", scheduleName);
-      if (newName && newName !== scheduleName) {
-        // 기존 데이터를 새 키로 복사하고 기존 삭제
-        schedules[newName] = schedules[scheduleName];
-        delete schedules[scheduleName];
-
-        // 현재 탭도 반영
-        if (currentSchedule === scheduleName) {
-          currentSchedule = newName;
-        }
-
-        renderTabs();
-        renderDays();
-      }
-    };
-    
     const closeBtn = document.createElement('span');
     closeBtn.className = 'tab-close';
     closeBtn.textContent = '✖';
-    closeBtn.onclick = (e) => {
+    closeBtn.onclick = async (e) => {
       e.stopPropagation();
       if (confirm(`'${scheduleName}' 일정을 삭제할까요?`)) {
         delete schedules[scheduleName];
+
+        const user = firebase.auth().currentUser;
+        if (user) {
+          const docId = scheduleNameToDocId[scheduleName] || scheduleName;
+          await db.collection("users")
+                  .doc(user.uid)
+                  .collection("itineraries")
+                  .doc(docId)
+                  .delete();
+        }
+
         const remaining = Object.keys(schedules).filter(n => n !== "나의 일정");
         currentSchedule = remaining.length > 0 ? remaining[0] : "";
         renderTabs();
@@ -144,7 +166,6 @@ function renderTabs() {
     }
 
     tabsContainer.appendChild(tab);
-
   });
 
   // ➤ 오른쪽 끝 탭 묶음
@@ -161,7 +182,16 @@ function renderTabs() {
   const myTab = document.createElement('button');
   myTab.className = 'tab my-schedule-tab';
   myTab.textContent = '나의 일정';
-  myTab.onclick = () => switchTab("나의 일정");
+  myTab.onclick = async () => {
+    const user = firebase.auth().currentUser;
+    const ref = db.collection("users").doc(user.uid).collection("itineraries").doc("나의 일정");
+    const snap = await ref.get();
+    if (!snap.exists) {
+      alert("'나의 일정'이 존재하지 않습니다. 먼저 저장해주세요.");
+      return;
+    }
+    switchTab("나의 일정");
+  };
 
   if (currentSchedule === "나의 일정") {
     myTab.classList.add('active');
@@ -170,7 +200,6 @@ function renderTabs() {
   rightGroup.appendChild(addTab);
   rightGroup.appendChild(myTab);
   tabsContainer.appendChild(rightGroup);
-  
 }
 
 // '?schedule=나의 일정'이 포함되어 있으면 "나의 일정" 탭을 자동으로 선택
@@ -195,11 +224,15 @@ function switchTab(scheduleName) {
 // -------------- 일정 추가 -------------
 // 새 일정(탭) 생성
 function addNewSchedule() {
-  const newScheduleName = `일정 ${Object.keys(schedules).length + 1}`;
-  schedules[newScheduleName] = { daysData: { "Day 1": [] }, daysOrder: ["Day 1"], dayCount: 1 };
-  switchTab(newScheduleName);
-}
+  let index = 1;
+  let newName;
+  do {
+    newName = `일정 ${index++}`;
+  } while (schedules[newName]);
 
+  schedules[newName] = { daysData: { "Day 1": [] }, daysOrder: ["Day 1"], dayCount: 1 };
+  switchTab(newName);
+}
 // -------------- Day 목록 렌더링 -------------
 // 현재 일정의 Day들을 화면에 출력
 function renderDays() {
@@ -374,6 +407,10 @@ function addDestination() {
   schedules[currentSchedule].daysData[day].push({ name, type, address });
   destinationInput.value = '';
   renderDays();
+
+  // Firestore에도 저장
+  saveToFirestore(currentSchedule);
+
 }
 
 // Day 추가
@@ -434,7 +471,7 @@ function editDestination(day, dest) {
   const newName = prompt('목적지 이름 수정:', dest.name);
   if (newName) dest.name = newName;
   const newTag = prompt('태그 수정:', dest.type);
-  if (newTag) dest.type = newType;
+  if (newTag) dest.type = newTag;
   const newAddress = prompt('주소 수정:', dest.address || '');
   if (newAddress !== null) dest.address = newAddress;
   renderDays();
@@ -573,12 +610,41 @@ function saveSchedule() {
   // 현재 일정 복사해서 나의 일정에 저장
   if (!currentSchedule) return;
 
+  // Firestore에 저장
+  saveToFirestore(currentSchedule);
+
+  alert("현재 일정이 저장되었습니다.");
+  renderTabs();
+}
+
+// 나의 일정 지정 로직 추가
+document.getElementById('assign-my-schedule').addEventListener('click', async () => {
+  if (!currentSchedule) return;
+
   const currentData = JSON.parse(JSON.stringify(schedules[currentSchedule]));
   schedules["나의 일정"] = currentData;
 
-  alert("현재 일정이 '나의 일정'에 저장되었습니다.");
+  await saveToFirestore("나의 일정");
+
+  alert(`"${currentSchedule}" 일정이 '나의 일정'에 복사되었습니다.`);
   renderTabs();
-}
+});
+
+// '나의 일정' 클릭 시 Firestore에 없으면 alert
+const myTab = document.createElement('button');
+myTab.className = 'tab my-schedule-tab';
+myTab.textContent = '나의 일정';
+myTab.onclick = async () => {
+  const user = firebase.auth().currentUser;
+  const ref = db.collection("users").doc(user.uid).collection("itineraries").doc("나의 일정");
+  const snap = await ref.get();
+  if (!snap.exists) {
+    alert("'나의 일정'이 존재하지 않습니다. 먼저 지정해주세요.");
+    return;
+  }
+
+  switchTab("나의 일정");
+};
 
 // -------------- 초기화 -------------
 function initialize() {
@@ -590,6 +656,3 @@ function initialize() {
 
 addButton.addEventListener('click', addDestination);
 addDayButton.addEventListener('click', addDay);
-
-
-initialize();

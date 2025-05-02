@@ -1,6 +1,7 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
 import { getAuth, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js";
 
+// Firebase 설정
 const firebaseConfig = {
   apiKey: "AIzaSyDyIGwUGgnoVIPXe4HINkYhZzYOT_B8xzo",
   authDomain: "aibe-3.firebaseapp.com",
@@ -19,33 +20,29 @@ function login() {
   const email = document.getElementById('email').value.trim();
   const password = document.getElementById('password').value.trim();
   const messageDiv = document.getElementById('message');
-
-  // 🟥 기본 입력값 확인
+  
   if (!email || !password) {
     messageDiv.textContent = '이메일과 비밀번호를 모두 입력하세요!';
     return;
   }
-
+  
   if (password.length < 6) {
     messageDiv.textContent = '비밀번호는 최소 6자리 이상이어야 합니다!';
     return;
   }
-
   
-  // 🟢 로그인 시도
   signInWithEmailAndPassword(auth, email, password)
     .then((userCredential) => {
-      messageDiv.textContent = `로그인 성공: ${userCredential.user.email}`;
-      window.location.href = "index.html";  // 메인 페이지로 이동
+      window.location.href = "index.html"; // 성공시 바로 이동
     })
     .catch((error) => {
-      console.error('에러 코드:', error.code);  // 디버깅용 (원하면 삭제해도 됨)
-
-      // ✅ 이메일 또는 비밀번호 에러 통합 처리
+      console.error('에러 코드:', error.code);
+  
       if (
         error.code === 'auth/user-not-found' || 
         error.code === 'auth/wrong-password' || 
-        error.code === 'auth/invalid-credential'
+        error.code === 'auth/invalid-credential'||
+        error.code === 'auth/invalid-email' 
       ) {
         messageDiv.textContent = '이메일 또는 비밀번호가 잘못되었습니다.';
       } else {
@@ -53,7 +50,6 @@ function login() {
       }
     });
 }
-
 
 // ✅ 버튼 클릭 → 로그인
 document.getElementById('login-btn').addEventListener('click', login);

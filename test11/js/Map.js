@@ -290,36 +290,46 @@ function renderMarkersOnMap(items) {
 
 // ----------------- 일정 생성 -----------------
 function createDailyItinerary() {
-  const tourists    = selectedPlaces.length    ? selectedPlaces    : currentPlaces;
-  const restaurants = selectedRestaurants.length ? selectedRestaurants : currentRestaurants;
-  const hotel       = currentHotels[0] || {};
-  const airports    = currentAirports;         // ★
-  const airport     = airports[0] || null;     // 첫 번째 공항 정보
-  const days        = DAYS;
+  // 유저가 선택한 게 없으면 자동 검색된 리스트 사용
+  const touristsRaw = selectedPlaces.length ? selectedPlaces : currentPlaces;
+  const restaurantsRaw = selectedRestaurants.length ? selectedRestaurants : currentRestaurants;
+  const hotel = currentHotels[0] || {};
+  const airport = currentAirports[0] || null;
+  const days = DAYS;
+
+  // ⚠ geometry 정보 없는 장소 제외
+  const tourists = sortByDistance(departure, touristsRaw.filter(p => p.geometry?.location));
+  const restaurants = sortByDistance(departure, restaurantsRaw.filter(p => p.geometry?.location));
+
+  if (tourists.length === 0 && restaurants.length === 0) {
+    alert("추천 가능한 관광지/식당이 없습니다. 다른 국가를 선택하거나 직접 선택해주세요.");
+    return [];
+  }
 
   const itn = [];
   let t = 0, r = 0;
+
   for (let d = 1; d <= days; d++) {
     const day = [];
 
     if (d === 1) {
-      // 출발지: 인천공항(기존)
+      // 인천 출발
       day.push(departure);
 
-      // 도착지: 검색된 공항이 있으면 그걸, 없으면 fallback 문자열
+      // 도착지: 현지 공항 또는 호텔 좌표 fallback
       if (airport) {
         day.push({
           type: '도착',
           name: airport.name,
-          lat:  airport.geometry.location.lat,
-          lng:  airport.geometry.location.lng
+          lat: airport.geometry.location.lat,
+          lng: airport.geometry.location.lng
         });
       } else {
         day.push({
           type: '도착',
-          name: `${capitalData[lastSelectedId]}공항`,  // fallback
-          lat:  hotel.geometry?.location.lat,
-          lng:  hotel.geometry?.location.lng
+          name: `${capitalData[lastSelectedId]}공항`,
+          lat: hotel.geometry?.location.lat,
+          lng: hotel.geometry?.location.lng
         });
       }
     }
@@ -327,41 +337,23 @@ function createDailyItinerary() {
     // 오전 식당
     if (restaurants.length) {
       const p = restaurants[r % restaurants.length]; r++;
-      day.push({
-        type: '식당',
-        name: p.name,
-        address: p.formatted_address || p.vicinity,
-        lat: p.geometry.location.lat,
-        lng: p.geometry.location.lng
-      });
+      day.push(toPlaceObj(p, '식당'));
     }
 
     // 관광지
     if (tourists.length) {
       const p = tourists[t % tourists.length]; t++;
-      day.push({
-        type: '관광지',
-        name: p.name,
-        address: p.formatted_address,
-        lat: p.geometry.location.lat,
-        lng: p.geometry.location.lng
-      });
+      day.push(toPlaceObj(p, '관광지'));
     }
 
     // 오후 식당
     if (restaurants.length) {
       const p = restaurants[r % restaurants.length]; r++;
-      day.push({
-        type: '식당',
-        name: p.name,
-        address: p.formatted_address || p.vicinity,
-        lat: p.geometry.location.lat,
-        lng: p.geometry.location.lng
-      });
+      day.push(toPlaceObj(p, '식당'));
     }
 
-    // 숙소 (마지막 날 제외)
-    if (hotel.name && d < days) {          // ▼ input_days → days
+    // 숙소
+    if (hotel.name && d < days) {
       day.push({
         type: '숙소',
         name: hotel.name,
@@ -373,35 +365,73 @@ function createDailyItinerary() {
 
     // 마지막 날 복귀
     if (d === days) {
-      // 마지막 날 공항출발
       if (airport) {
         day.push({
           type: '공항출발',
           name: airport.name,
-          lat:  airport.geometry.location.lat,
-          lng:  airport.geometry.location.lng
+          lat: airport.geometry.location.lat,
+          lng: airport.geometry.location.lng
         });
       } else {
         day.push({
           type: '공항출발',
           name: `${capitalData[lastSelectedId]}공항`,
-          lat:  hotel.geometry.location.lat,
-          lng:  hotel.geometry.location.lng
+          lat: hotel.geometry.location.lat,
+          lng: hotel.geometry.location.lng
         });
       }
-      // 귀환: 인천공항
+
       day.push({
         type: '도착',
         name: departure.name,
-        lat:  departure.lat,
-        lng:  departure.lng
+        lat: departure.lat,
+        lng: departure.lng
       });
     }
 
     itn.push({ day: d, places: day });
   }
+
   return itn;
 }
+
+// 🔍 가까운 거리 순 정렬
+function sortByDistance(start, list) {
+  const result = [];
+  let current = { lat: start.lat, lng: start.lng };
+  const remaining = [...list];
+
+  while (remaining.length) {
+    remaining.sort((a, b) => distance(current, a) - distance(current, b));
+    const next = remaining.shift();
+    result.push(next);
+    current = {
+      lat: next.geometry.location.lat,
+      lng: next.geometry.location.lng
+    };
+  }
+
+  return result;
+}
+
+// 거리 계산 (유클리드 거리)
+function distance(a, b) {
+  const dx = a.lat - b.geometry.location.lat;
+  const dy = a.lng - b.geometry.location.lng;
+  return Math.sqrt(dx * dx + dy * dy);
+}
+
+// 목적지 객체 포맷
+function toPlaceObj(p, type) {
+  return {
+    type,
+    name: p.name,
+    address: p.formatted_address || p.vicinity,
+    lat: p.geometry.location.lat,
+    lng: p.geometry.location.lng
+  };
+}
+
 
 // ----------------- Day 버튼 렌더링 -----------------
 function renderDayButtons(itin) {

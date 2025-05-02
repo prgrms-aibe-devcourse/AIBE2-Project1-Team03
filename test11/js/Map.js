@@ -524,10 +524,14 @@ document.getElementById('save-itinerary-btn')
       return alert('먼저 “일정 생성” 버튼을 눌러주세요.');
     }
 
+    const name = prompt("일정 이름을 입력하세요", "일정 1");
+    const displayName = name || `일정 ${today.getMonth() + 1}/${today.getDate()}`;
+
     try {
       // users/{uid}/itineraries 컬렉션 참조
       const itnColl = collection(db, 'users', user.uid, 'itineraries');
       await addDoc(itnColl, {
+        displayName,
         country: lastSelectedId,
         days: itinerary,
         createdAt: serverTimestamp()

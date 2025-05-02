@@ -34,17 +34,21 @@ async function saveToFirestore(scheduleName) {
   }));
 
   const docId = scheduleNameToDocId[scheduleName] || scheduleName;
+  const docRef = db.collection("users").doc(user.uid).collection("itineraries").doc(docId);
 
-  await db
-  .collection("users")
-  .doc(user.uid)
-  .collection("itineraries")
-  .doc(docId) // 문서 이름: 기존 ID를 유지하거나 새로
-  .set({
+  const existing = await docRef.get();
+  const data = {
     displayName: scheduleName,
     days: days,
     updatedAt: firebase.firestore.FieldValue.serverTimestamp()
-  });
+  };
+
+  // 🔐 updatedAt은 처음 저장할 때만
+  if (!existing.exists) {
+    data.updatedAt = firebase.firestore.FieldValue.serverTimestamp();
+  }
+
+  await docRef.set(data, { merge: true }); // merge 옵션 추가!
 }
 
 // 로그인 시 일정 로드
@@ -64,7 +68,7 @@ async function loadItinerary(uid) {
       .collection("users")
       .doc(uid)
       .collection("itineraries")
-      .orderBy("createdAt", "asc")
+      .orderBy("updatedAt", "asc")
       .get();
     if (snapshot.empty) {
       // 기본 일정 생성
@@ -223,16 +227,44 @@ function switchTab(scheduleName) {
 
 // -------------- 일정 추가 -------------
 // 새 일정(탭) 생성
-function addNewSchedule() {
-  let index = 1;
-  let newName;
-  do {
-    newName = `일정 ${index++}`;
-  } while (schedules[newName]);
+async function addNewSchedule() {
+  let newName = prompt("새 일정 이름을 입력하세요:");
+  if (!newName) return;
 
-  schedules[newName] = { daysData: { "Day 1": [] }, daysOrder: ["Day 1"], dayCount: 1 };
+  while (schedules[newName]) {
+    newName = prompt(`"${newName}"은 이미 존재합니다. 다른 이름을 입력하세요:`);
+    if (!newName) return;
+  }
+
+  schedules[newName] = {
+    daysData: { "Day 1": [] },
+    daysOrder: ["Day 1"],
+    dayCount: 1
+  };
+
+  const user = firebase.auth().currentUser;
+  if (user) {
+    const docRef = db.collection("users").doc(user.uid).collection("itineraries").doc(); // 자동 ID
+    await docRef.set({
+      displayName: newName,
+      days: [],
+      updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+    });
+
+    // 🔁 저장 직후 updatedAt 포함 여부를 확인하려면 get()을 한 번 더!
+    const savedDoc = await docRef.get();
+    const savedData = savedDoc.data();
+    if (!savedData.updatedAt) {
+      console.warn(`updatedAt 서버 적용 전 상태. 서버 반영까지 약간 지연될 수 있음.`);
+    }
+
+    scheduleNameToDocId[newName] = docRef.id;
+  }
+
+  // ⏱ set() 완료 후에 탭 전환
   switchTab(newName);
 }
+
 // -------------- Day 목록 렌더링 -------------
 // 현재 일정의 Day들을 화면에 출력
 function renderDays() {

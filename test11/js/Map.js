@@ -534,7 +534,7 @@ document.getElementById('save-itinerary-btn')
         displayName,
         country: lastSelectedId,
         days: itinerary,
-        createdAt: serverTimestamp()
+        updatedAt: serverTimestamp()
       });
       alert('✅ 일정이 저장되었습니다!');
     } catch (err) {

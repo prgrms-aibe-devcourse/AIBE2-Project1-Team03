@@ -5,7 +5,10 @@ import {
   collection,
   doc,
   addDoc,
-  serverTimestamp
+  serverTimestamp,
+  query,
+  where,
+  getDocs
 } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
 
 import { capitalKoMap } from './capital-ko-map.js'; 
@@ -560,12 +563,21 @@ document.getElementById('save-itinerary-btn')
     try {
       // users/{uid}/itineraries 컬렉션 참조
       const itnColl = collection(db, 'users', user.uid, 'itineraries');
+
+      const q = query(itnColl, where('displayName', '==', displayName));
+      const querySnapshot = await getDocs(q);
+
+      if (!querySnapshot.empty) {
+        return alert('이미 동일한 이름의 일정이 있어요. 다른 이름을 입력해주세요.');
+      }
+      
       await addDoc(itnColl, {
         displayName,
         country: lastSelectedId,
         days: itinerary,
         updatedAt: serverTimestamp()
       });
+      
       alert('✅ 일정이 저장되었습니다!');
     } catch (err) {
       console.error(err);

@@ -606,7 +606,7 @@ document.getElementById('save-itinerary-btn')
       .map(p => `${p.geometry.location.lat},${p.geometry.location.lng}`)
       .join('|');
     const originStr = `${origin.lat},${origin.lng}`;
-    const url = `https://maps.googleapis.com/maps/api/distancematrix/json?origins=${originStr}&destinations=${destinations}&mode=walking&language=ko&key=${googlePlacesKey}`;
+    const url = `https://maps.googleapis.com/maps/api/distancematrix/json?origins=${originStr}&destinations=${destinations}&mode=driving&language=ko&key=${googlePlacesKey}`;
     const proxy = 'http://localhost:8080/'; // CORS 우회
     const res = await fetch(proxy + url);
     const data = await res.json();

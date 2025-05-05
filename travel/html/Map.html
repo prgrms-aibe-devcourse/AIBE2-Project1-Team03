@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link rel="stylesheet" href="../css/style.css">
+<link rel="stylesheet" href="../css/Map.css">
+<link rel="icon" href="../img/favicon-32x32.png">
+<title>여행 계획 추천</title>
+</head>
+<body>
+  <div id="navbar-container"></div>
+  <div id="map-container"></div>
+
+  <aside id="sidePanel" class="side-panel" aria-label="국가 정보 및 관광지">
+    <div class="info-wrapper" role="region" aria-label="국가 정보 및 날씨">
+      <div class="side-menu" id="contry_info" aria-live="polite"></div>
+      <div class="side-menu" id="weather" aria-live="polite"></div>
+    </div>
+    
+    <div id="category-buttons">
+      <button id="btn-tourist" class="category-btn active">관광지</button>
+      <button id="btn-restaurant" class="category-btn">식당</button>
+    </div>
+    <button id="side-close" aria-label="사이드 패널 닫기">✕</button>
+    <div class="tourist-container" id="tourist" aria-live="polite"></div>
+    
+    
+    <div class="under-wrapper">
+      <div id="Budget" class="side-menu" aria-live="polite"></div>
+    
+      <div class="button-group">
+        <button id="generate-itinerary-btn">일정생성</button>
+        <button id="review-btn">후기로 이동</button>
+      </div>
+    </div>
+  </aside>
+
+  <aside id="leftSidePanel" class="left-side-panel" aria-label="일정 패널">
+    <button id="left-side-close" aria-label="일정 패널 닫기">✕</button>
+    <div id="left-map-container"></div>
+    <div id="itinerary-list"></div>
+    <button id="save-itinerary-btn">저장</button>  
+  </aside>
+
+  <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBfeOZD9hcwVMkj7Vg7vGlughgxRdKQYAE"></script>
+  <script>
+    // URLSearchParams로 파라미터 가져오기
+    const urlParams = new URLSearchParams(window.location.search);
+    const MIN_BUDGET = Number(urlParams.get('minBudget')) || 0;
+    const MAX_BUDGET = Number(urlParams.get('maxBudget')) || Infinity;
+    const DAYS       = Number(urlParams.get('days'))       || 1;
+    const SELECTED_COUNTRY = urlParams.get('country') || '';
+  </script>
+
+
+<!-- 상단 메뉴바 -->
+<script>
+  fetch('navbar.html')
+    .then(response => response.text())
+    .then(html => {
+      document.getElementById('navbar-container').innerHTML = html;
+    })
+    .then(() => {
+      
+      const script = document.createElement('script');
+      script.type = 'module';
+      script.src = '../js/navbar.js';  // 로그인 처리하는 JS
+      document.body.appendChild(script);
+    });
+</script>
+
+
+
+<script type="module" src="../js/map.js"></script>
+</body>
+</html>

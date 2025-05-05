@@ -1,0 +1,66 @@
+* {
+    box-sizing: border-box;
+  }
+
+
+  header {
+    margin-top: 40px;
+    text-align: center;
+  }
+  header h1 {
+    font-size: 32px;
+    color: #1976d2;
+    margin-bottom: 10px;
+  }
+  header p {
+    color: #666;
+    font-size: 16px;
+  }
+
+  .filter-section {
+    width: 100%;
+    max-width: 500px;
+    background: white;
+    margin: 30px auto;
+    padding: 40px;
+    border-radius: 16px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.06);
+  }
+  .filter-section h2 {
+    font-size: 22px;
+    margin-bottom: 24px;
+    color: #333;
+    text-align: center;
+  }
+  .input-row {
+    margin-bottom: 20px;
+  }
+  label {
+    display: block;
+    margin-bottom: 6px;
+    font-weight: 600;
+    color: #333;
+  }
+  input, select {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    font-size: 15px;
+  }
+  .recommend-btn {
+    margin-top: 24px;
+    padding: 12px 24px;
+    background: #03c75a;
+    color: white;
+    font-weight: bold;
+    font-size: 16px;
+    border: none;
+    border-radius: 999px;
+    cursor: pointer;
+    transition: background 0.3s;
+    width: 100%;
+  }
+  .recommend-btn:hover {
+    background: #02a64f;
+  }

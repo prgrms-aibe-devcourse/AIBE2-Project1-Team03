@@ -1,0 +1,508 @@
+body {
+    margin: 0;
+    font-family: 'Pretendard', sans-serif;
+    background: #f3f5f5;
+    color: #333;
+  }
+  
+  header {
+    text-align: center;
+    padding: 20px;
+  }
+  
+  main {
+    display: flex;
+  }
+  
+  .map-container {
+    flex: 2;
+    padding: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    height: 80vh; /* ← 여기가 중요 */
+  }
+ 
+ 
+.info-panel {
+  width: 300px;
+  background: #fff;
+  border: 2px solid #ddd;
+  padding: 20px;
+  position: fixed;                  /* <- fixed로 고정 */
+  top: 50%;                         /* <- 화면 세로 가운데 */
+  right: 0;                         /* <- 오른쪽 끝 */
+  transform: translateY(-50%) translateX(100%);  /* <- 기본 상태: 숨겨짐 */
+  transition: transform 0.3s ease-in-out;
+  box-shadow: -2px 2px 10px rgba(0, 0, 0, 0.1);
+  border-radius: 15px 0 0 15px;     /* <- 왼쪽 모서리 둥글게 */
+}
+
+.info-panel.active {
+  transform: translateY(-50%) translateX(0);  /* <- 열릴 때 오른쪽으로 나옴 */
+}
+  
+  .chatbot {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+  }
+  
+  #chatbot-btn {
+    background-color: #aad4c7;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 15px;
+    cursor: pointer;
+  }
+  
+  #chatbot-window {
+    margin-top: 10px;
+    background-color: #fff;
+    border: 1px solid #ccc;
+    padding: 10px;
+    border-radius: 10px;
+  }
+  
+  .hidden {
+    display: none;
+  }
+  
+  button {
+    margin: 5px;
+    padding: 8px 12px;
+    border: none;
+    background-color: #d5c6e0;
+    border-radius: 10px;
+    cursor: pointer;
+  }
+
+/* 로그인, 회원가입 스타일 */
+  .auth-form {
+    max-width: 400px;
+    margin: 80px auto;
+    text-align: center;
+  }
+  
+  .auth-form input {
+    width: 80%;
+    padding: 10px;
+    margin: 10px 0;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+  }
+  
+  .auth-form button {
+    padding: 10px 20px;
+    background-color: #8e9aaf;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+  }
+  
+  .auth-form button:hover {
+    background-color: #726a95;
+  }
+  
+  .sub-text {
+    margin-top: 15px;
+    font-size: 14px;
+  }
+
+  #login-wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 90vh;
+    background-color: #f5f7f9;
+  }
+  
+
+  
+  .login-form {
+    background: white;
+    padding: 40px 30px;
+    border-radius: 12px;
+    box-shadow: 0 8px 16px rgba(0,0,0,0.1);
+    width: 320px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  .login-form h2 {
+    margin-bottom: 20px;
+    font-size: 24px;
+  }
+  
+  .login-form input {
+    width: 100%;
+    padding: 12px;
+    margin-bottom: 15px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+  }
+  
+  .login-form button {
+    width: 100%;
+    padding: 12px;
+    background-color: #7e8aa5;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 16px;
+    cursor: pointer;
+  }
+  
+  .login-form button:hover {
+    background-color: #6b7890;
+  }
+  
+  .login-form p {
+    margin-top: 15px;
+    font-size: 14px;
+  }
+  
+  .login-form p a {
+    color: #6b5b95;
+    text-decoration: none;
+  }
+  
+  .login-form p a:hover {
+    text-decoration: underline;
+  }
+
+  #logo {
+    display: block;
+    margin: 20px auto 10px auto;
+    width: 170px; 
+    transform: translateX(-8px);
+    
+  }
+
+  .error-message {
+    color: #e53935;
+    margin-bottom: 10px;
+    font-size: 14px;
+    text-align: center;
+  }
+
+
+/* 상단메뉴바 스타일 */
+  .navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 40px;               
+    background-color: #f8f8f8;
+    border-bottom: 1px solid #ddd;
+    position: relative;
+    min-height: 70px;                
+    box-sizing: border-box;
+  }
+  .navbar a {
+    text-decoration: none;
+    color: #333;
+    margin: 0 10px;
+    font-weight: 500;
+  }
+  
+  .navbar a:hover {
+    color: #03c75a; /* 네이버 그린 느낌 */
+  }
+
+  .right-menu {
+    display: flex;
+    gap: 20px;
+    min-width: 180px;              
+    justify-content: flex-end;
+    align-items: center;
+  }
+
+  .left-menu a {
+    margin-right: 20px;
+    text-decoration: none;
+    color: #333;
+    font-weight: 500;
+  }
+  
+  .right-menu a, .right-menu button {
+    text-decoration: none;
+    color: #333;
+    font-weight: 500;
+    background: none;
+    border: none;
+    cursor: pointer;
+  }
+  
+  .right-menu button:hover, .right-menu a:hover {
+    color: #03c75a;
+  }
+
+
+ /* 마이페이지 스타일*/
+  .mypage-container {
+    max-width: 500px;
+    margin: 100px auto;
+    background-color: #ffffff;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    padding: 40px;
+    text-align: center;
+    animation: fadeIn 0.5s ease-in-out;
+
+  }
+  
+  .info-item {
+    display: grid;
+    grid-template-columns: 120px 1fr auto; /* ← label, value, button */
+    align-items: center;
+    margin: 12px 0;
+    padding: 8px 0;
+    border-bottom: 1px solid #eee;
+  }
+  
+  .label {
+    font-weight: bold;
+  }
+  
+  .value {
+    color: #1f1e1e;
+    padding-left: 10px;
+  }
+  
+  .edit-btn {
+    padding: 5px 12px;
+    background-color: #d5c6e0;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: background-color 0.3s ease;
+  }
+  
+  .edit-btn:hover {
+    background-color: #bfa4d5;
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-10px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  
+  .mypage-container h2 {
+    margin-bottom: 30px;
+    color: #333;
+    font-size: 32px;
+
+    border-bottom: 1px solid #ddd;
+    padding-bottom: 10px;
+   
+  }
+  
+  .mypage-container p {
+    font-size: 18px;
+    color: #555;
+    margin: 12px 0;
+  }
+
+  
+  .logout-btn {
+    margin-top: 40px;
+    padding: 12px 30px;
+    background-color: #8e9aaf;
+    color: white;
+    border: none;
+    border-radius: 10px;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+  
+  .logout-btn:hover {
+    background-color: #726a95;
+  }
+
+
+  .delete-btn {
+    margin-top: 20px;
+    padding: 12px 30px;
+    background-color: #e63946;
+    color: white;
+    border: none;
+    border-radius: 10px;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+  
+  .delete-btn:hover {
+    background-color: #d62828;
+  }
+
+  .mypage-links {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    margin-top: 30px;
+  }
+  
+  .mypage-link-btn {
+    padding: 12px 24px;
+    background-color: #8e9aaf;
+    color: white;
+    border: none;
+    border-radius: 999px;             
+    text-decoration: none;
+    font-weight: bold;
+    transition: background-color 0.3s ease;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);  
+  }
+  
+  .mypage-link-btn:hover {
+    background-color: #737994;
+  }
+
+  .mypage-actions {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;                      /* 위아래 버튼 사이 여백 */
+    margin-top: 40px;
+  }
+
+  .profile-img-box {
+    margin-bottom: 20px;
+  }
+  .profile-img {
+    width: 150px;
+    height: 150px;
+    object-fit: cover;
+    border-radius: 50%;
+    border: 2px solid #8e9aaf;
+  }
+
+  .upload-profile-btn {
+    margin-top: 15px;
+    padding: 12px 24px;
+    background-color: #aad4c7;   /* 은은한 민트색 */
+    color: white;
+    border: none;
+    border-radius: 999px;         /* 완전 둥글게 */
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);  /* 약한 그림자 */
+  }
+  
+  .upload-profile-btn:hover {
+    background-color: #88c0b0;   /* 호버할 때 좀 더 진하게 */
+  }
+
+
+
+  /*모달 스타일*/
+  .modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0,0,0,0.5);
+    display: none;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+  }
+  
+  .modal {
+    background-color: #fff;
+    padding: 30px;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+    text-align: center;
+    width: 300px;
+  }
+  
+  .modal h3 {
+    margin-bottom: 20px;
+    color: #333;
+  }
+  
+  .modal input {
+    width: 80%;
+    padding: 10px;
+    margin-bottom: 20px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+  }
+  
+  .modal button {
+    padding: 10px 20px;
+    margin: 0 5px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+  }
+  
+  .modal .confirm-btn {
+    background-color: #8e9aaf;
+    color: white;
+  }
+  
+  .modal .cancel-btn {
+    background-color: #ccc;
+    color: #333;
+  }
+
+
+  /* 네비게이션 바 로고 */
+  .center-logo {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-70%, -50%); /* ← -50% → -46% 또는 -45% 조절 */
+    z-index: 10;
+  }
+  
+  .nav-logo-img {
+    height: 130px;
+    object-fit: contain;
+  }
+
+
+  .ai-chatbox {
+    padding: 16px;
+    background-color: #f5f5f5;
+    border-radius: 12px;
+    margin: 20px auto;
+    max-width: 800px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+  }
+  
+  .ai-chatbox textarea {
+    width: 100%;
+    height: 80px;
+    resize: none;
+    font-size: 1rem;
+    padding: 10px;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+    margin-bottom: 10px;
+  }
+  
+  .ai-chatbox button {
+    padding: 10px 20px;
+    font-size: 1rem;
+    background-color: #4285f4;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+  }

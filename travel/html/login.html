@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>로그인</title>
+  <link rel="stylesheet" href="../css/style.css" />
+  <link rel="icon" href="../img/favicon-32x32.png">
+</head>
+<body>
+    
+    <div id="login-wrapper">
+      
+      <div class="login-form">
+        <a href="index.html">
+          <img src="../img/여길지도.png" alt="여길지도 로고" id="logo">
+        </a>
+        <div id="message" class="error-message"></div> 
+        <input type="email" id="email"  placeholder="이메일 입력">
+        <input type="password" id="password" placeholder="비밀번호 입력">
+        <button  id="login-btn" >로그인</button>
+        <p>계정이 없으신가요? <a href="signup.html">회원가입</a></p>
+      </div>
+    </div>
+
+  <!-- 모듈 방식! -->
+  <script type="module" src="../js/login.js"></script>
+</body>
+</html>

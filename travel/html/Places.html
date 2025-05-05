@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <title>여행지 검색</title>
+  <link rel="stylesheet" href="../css/style.css" />
+  <link rel="stylesheet" href="../css/Places.css" />
+  <link rel="icon" href="../img/favicon-32x32.png">
+</head>
+<body>
+
+<div id="navbar-container"></div>
+
+<div class="search-section">
+    <h1>여행지를 검색 해보세요! ✈️</h1>
+    <div>
+      <input type="text" id="city-input" placeholder="도시 이름 입력 (예: 도쿄)">
+      <button id="search-btn">검색</button>
+    </div>
+  </div>
+
+<div id="places-container"></div>
+
+<!-- 경고창 모달 -->
+<div id="alert-modal" class="modal-overlay" style="display: none;">
+  <div class="modal">
+    <h3 id="alert-modal-title">알림</h3>
+    <p id="alert-modal-message"></p>
+    <button id="alert-modal-confirm-btn">확인</button>
+  </div>
+</div>
+
+<!-- 상단 메뉴바 -->
+<script>
+    fetch('navbar.html')
+      .then(response => response.text())
+      .then(html => {
+        document.getElementById('navbar-container').innerHTML = html;
+      })
+      .then(() => {
+        const script = document.createElement('script');
+        script.type = 'module';
+        script.src = '../js/navbar.js';
+        document.body.appendChild(script);
+      });
+</script>
+
+<script type="module" src="../js/Places.js"></script>
+
+</body>
+</html>

@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>여행 스타일 추천</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Pretendard&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../css/style.css">
+  <link rel="stylesheet" href="../css/main.css">
+
+</head>
+<body>
+    <div id="navbar-container"></div>
+  <header>
+    <h1>나만의 여행을 시작해보세요</h1>
+    <p>예산, 기간, 국가 정보를 입력하면 추천 국가가 자동으로 표시됩니다.</p>
+  </header>
+
+  <section class="filter-section">
+    <h2>여행 정보 입력</h2>
+    <form id="filterForm">
+      <div class="input-row">
+        <label>최소 예산($)</label>
+        <input type="number" name="minBudget" placeholder="예: 1500" required />
+      </div>
+      <div class="input-row">
+        <label>최대 예산($)</label>
+        <input type="number" name="maxBudget" placeholder="예: 2000" required />
+      </div>
+      <div class="input-row">
+        <label>여행 일수</label>
+        <input type="number" name="days" placeholder="예: 5" min="1" required />
+      </div>
+      <div class="input-row">
+        <label>강조할 국가 (선택 사항)</label>
+        <select name="country">
+          <option value="">선택 안 함</option>
+          <option value="KR">대한민국</option>
+          <option value="JP">일본</option>
+          <option value="FR">프랑스</option>
+          <option value="US">미국</option>
+          <option value="IT">이탈리아</option>
+        </select>
+      </div>
+      <button type="submit" class="recommend-btn">여행 추천 받기 ✈️</button>
+    </form>
+  </section>
+
+  <script>
+    document.getElementById('filterForm')
+      .addEventListener('submit', e => {
+        e.preventDefault();
+        const params = new URLSearchParams(new FormData(e.target)).toString();
+        window.location.href = `map.html?${params}`;
+      });
+  </script>
+
+   <!-- 상단 메뉴바 -->
+   <script>
+    fetch('navbar.html')
+      .then(response => response.text())
+      .then(html => {
+        document.getElementById('navbar-container').innerHTML = html;
+      })
+      .then(() => {
+        
+        const script = document.createElement('script');
+        script.type = 'module';
+        script.src = '../js/navbar.js';  // 로그인 처리하는 JS
+        document.body.appendChild(script);
+      });
+  </script>
+
+</body>
+</html>

@@ -8,7 +8,9 @@ import {
     doc,
     updateDoc,
     deleteDoc,
-    Timestamp
+    Timestamp,
+    orderBy, 
+    query
 } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js";
 
 const firebaseConfig = {
@@ -31,8 +33,11 @@ if (!getApps().length) {
 const auth = getAuth(app);
 const db = getFirestore(app); 
 
+
 document.addEventListener("DOMContentLoaded", function () {
     const writeReviewBtn = document.getElementById("write-review-btn");
+    const myReviewsBtn = document.getElementById("my-review-btn");
+    renderReviews("all"); // 초기 전체 렌더링
 
     let messageListenerAdded = false;
 
@@ -40,6 +45,10 @@ document.addEventListener("DOMContentLoaded", function () {
         if (user) {
             writeReviewBtn.disabled = false;
             console.log("로그인됨");
+
+            // myReviewsBtn.addEventListener("click", () => {
+            //     renderMyReviews(user.email);
+            // });
 
             writeReviewBtn.addEventListener("click", () => {
                 const newWindow = window.open("newReview.html", "newReview", "width=600,height=400");
@@ -105,12 +114,18 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     }
 
+    function truncateText(text, maxLength) {
+        if (!text) return "";
+        return text.length > maxLength ? text.substring(0, maxLength) + "..." : text;
+    }    
+
     async function renderReviews(filterContinent = "all") {
         const reviewList = document.getElementById("review-list");
         reviewList.innerHTML = "";
 
         try {
-            const querySnapshot = await getDocs(collection(db, "reviews"));
+            const q = query(collection(db, "reviews"), orderBy("createdAt", "desc"));
+            const querySnapshot = await getDocs(q);
             const reviews = querySnapshot.docs.map(doc => ({
                 id: doc.id,
                 ...doc.data()
@@ -137,15 +152,18 @@ document.addEventListener("DOMContentLoaded", function () {
                     createdAtString = review.createdAt.toDate().toLocaleString();
                 }
                 
+                // ${review.imageUrl ? `<img src="${review.imageUrl}" style="max-width: 300px;">` : ""}
                 li.innerHTML = `
-                    <p class="review-title"><strong>제목:</strong> ${review.title}</p>  
-                    ${review.imageUrl ? `<img src="${review.imageUrl}" style="max-width: 300px;">` : ""}
-                    <p class="review-summary">
-                        <strong>국가:</strong> ${review.country} <br>
-                        <strong>작성자:</strong> ${review.email} <br>
-                        <strong>작성일:</strong> ${createdAtString}
-                    </p>
-                    <p><em>리뷰 클릭 시 전체 내용이 표시됩니다</em></p>
+                    <p class="review-title"><strong>${review.title}</strong></p>  
+                    <div class="review-summary">
+                        <img src="${review.imageUrl}" alt="Review Image">
+                        <div class="review-meta">
+                        <p><strong>🚩:</strong> ${review.country}</p>
+                        <p><strong>👤:</strong> ${review.email}</p>
+                        <p><strong>📆:</strong> ${createdAtString}</p>
+                        </div>
+                    </div>
+                    <p class="review-content-preview"><em>${truncateText(review.content, 80)}</em></p>
                     <div class="comments">
                         <h4>댓글</h4>
                         <ul class="comment-list">
@@ -165,7 +183,9 @@ document.addEventListener("DOMContentLoaded", function () {
                 // reviewList.appendChild(li);
 
                 // ▶ 리뷰 클릭 시 팝업 창으로 content 표시
-                li.querySelector(".review-summary").addEventListener("click", () => {
+                li.querySelector(".review-summary").addEventListener("click", openReviewPopup);
+                li.querySelector(".review-content-preview").addEventListener("click", openReviewPopup); 
+                function openReviewPopup() {
                     const popup = window.open("", "reviewPopup", "width=500,height=400");
                     popup.document.write(`
                         <html>
@@ -188,7 +208,7 @@ document.addEventListener("DOMContentLoaded", function () {
                             </body>
                         </html>
                     `);
-                });
+                }
 
                 // 이벤트 연결
                 const commentBtn = li.querySelector(".comment-btn");

@@ -2,44 +2,9 @@ body {
     margin: 0;
     padding: 0;
     font-family: 'Noto Sans KR', sans-serif;
-    background-color: #f9f9f9;
+    background: #fefefe;
   }
 
-  .navbar {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 15px 40px;               /* ← 여유 있으면서도 과하지 않게 */
-    background-color: #f8f8f8;
-    border-bottom: 1px solid #ddd;
-    position: relative;
-    min-height: 80px;                /* ← 여기 줄여주자! */
-    box-sizing: border-box;
-  }
-
-  .navbar a {
-    text-decoration: none;
-    color: #333;
-    margin: 0 10px;
-    font-weight: 500;
-  }
-  
-  .navbar a:hover {
-    color: #03c75a; /* 네이버 그린 느낌 */
-  }
-
-  .nav-logo-img {
-    height: 130px;
-    object-fit: contain;
-  }
-
-  .center-logo {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-70%, -50%); /* ← -50% → -46% 또는 -45% 조절 */
-    z-index: 10;
-  }
 
   /* 네비게이션 바 영역 확보 */
   header {
@@ -171,4 +136,70 @@ body {
 
 .button-group button:hover {
   background-color: #388e3c;
+}
+
+
+.navbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 18px 40px;
+  background-color: #ffffff;
+  border-bottom: 1px solid #e0e0e0;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
+  font-family: 'Gowun Dodum', sans-serif;
+  position: relative;
+  z-index: 999;
+}
+
+
+.left-menu, .right-menu {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+
+.navbar a {
+  text-decoration: none;
+  color: #444;
+  font-size: 17px;
+  font-weight: 600;
+  transition: color 0.3s ease;
+}
+
+.navbar a:hover {
+  color: #4f86f7;
+}
+
+.center-logo {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-70%, -50%); /* ← -50% → -46% 또는 -45% 조절 */
+  z-index: 10;
+}
+
+.nav-logo-img {
+  height: 130px;
+  object-fit: contain;
+}
+
+.right-menu a,
+.right-menu button {
+  background-color: #f0f4ff;
+  color: #4f86f7;
+  padding: 8px 14px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.right-menu a:hover,
+.right-menu button:hover {
+  background-color: #d7e7ff;
+  color: #2f6de0;
 }

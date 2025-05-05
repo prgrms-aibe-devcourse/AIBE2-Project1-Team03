@@ -2,13 +2,18 @@
 body {
     margin: 0;
     font-family: 'Pretendard', sans-serif;
-    background: #f3f5f5;
+    background: #fefefe;
     color: #333;
   }
-  
+
   header {
     text-align: center;
     padding: 10px;
+  }
+  header h1 {
+    font-size: 32px;
+    color: #1976d2;
+    margin-bottom: 10px;
   }
   
   button {

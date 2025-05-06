@@ -1,0 +1,24 @@
+{
+  "name": "test11",
+  "version": "1.0.0",
+  "description": "여행지 검색 기능 쓰려면 다음과 같은 세팅이 필요합니다.",
+  "main": "server.js",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "dotenv": "^16.5.0",
+    "express": "^5.1.0",
+    "node-fetch": "^2.7.0",
+    "openai": "^4.97.0"
+  }
+}

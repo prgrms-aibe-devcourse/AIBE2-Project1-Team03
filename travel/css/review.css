@@ -1,0 +1,319 @@
+/* === 전역 스타일 (반드시 포함) === */
+body {
+  margin: 0;
+  font-family: 'Pretendard', sans-serif;
+  background: #fefefe;
+  color: #333;
+}
+
+header {
+  text-align: center;
+  padding: 10px;
+  font-size: 16px;
+    color: #1976d2;
+    margin-right: 40px;
+}
+
+
+button, .delete-btn, .edit-btn {
+  margin: 5px;
+  padding: 8px 12px;
+  border: none;
+  background-color: #d5c6e0;
+  border-radius: 10px;
+  cursor: pointer;
+}
+
+/* 상단 네비게이션 로딩되는 부분 */
+#navbar-container {
+  width: 100%;
+} 
+
+/* 상단메뉴바 스타일 */
+/* 상단메뉴바 스타일 */
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 18px 40px; /* ← 여긴 첫 번째 파일 기준 */
+  background-color: #ffffff;
+  border-bottom: 1px solid #e0e0e0;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
+  font-family: 'Gowun Dodum', sans-serif;
+  position: relative;
+  z-index: 999;
+  min-height: 70px;
+  box-sizing: border-box;
+}
+
+.navbar a {
+  text-decoration: none;
+  color: #444;
+  font-size: 17px;
+  font-weight: 600;
+  transition: color 0.3s ease;
+}
+
+.navbar a:hover {
+  color: #4f86f7;
+}
+
+.left-menu, .right-menu {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.right-menu a,
+.right-menu button {
+  background-color: #f0f4ff;
+  color: #4f86f7;
+  padding: 8px 14px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.right-menu a:hover,
+.right-menu button:hover {
+  background-color: #d7e7ff;
+  color: #2f6de0;
+}
+
+/* 네비게이션 바 로고 */
+.center-logo {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-70%, -50%); /* ← -50% → -46% 또는 -45% 조절 */
+  z-index: 10;
+}
+
+.nav-logo-img {
+  height: 130px;
+  object-fit: contain;
+}
+
+/* 메인 레이아웃 */
+main {
+  max-width: 900px;
+  margin: 40px auto;
+  padding: 20px;
+  background-color: #ffffff;
+  border-radius: 16px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+/* 라디오 버튼 구역 */
+#continent-city {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+}
+
+#continent-buttons div {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.radiobtn {
+  accent-color: #6772e5;
+}
+
+#continent-buttons {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
+/* 체크박스 구역 */
+#city-checkboxes {
+  margin-bottom: 20px;
+  margin-left: 20px;
+}
+
+.continent-view {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 10px;
+  margin-left: 75px;
+}
+
+.continent-view input[type="checkbox"] {
+  accent-color: #50bfa0;
+}
+
+.continent-view label {
+  margin-right: 20px
+}
+
+/* review.css */
+
+/* 버튼 묶음 */
+.top-button-group {
+  display: flex;
+  gap: 12px;
+}
+
+.top-button-group {
+  display: flex;
+  align-items: center;
+  /* justify-content: space-between; */
+  /* padding: 8px 12px; */
+  gap: 8px;
+  /* border-radius: 10px; */
+  /* background: #eee; */
+  /* border: none; */
+  /* cursor: pointer; */
+}
+
+#write-review-btn, #my-review-btn {
+  background-color: #c5a1de;
+  color: white;
+  margin: 0 10px 0 0;
+  padding: 8px 12px;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+}
+
+.radio {
+  opacity: 0;
+}
+
+.radio>label {
+  padding: 5px 10px;
+  border: 1px solid #ccc;
+  color: green;
+  border-radius: 3px;
+}
+
+input[type=radio]:checked + label {
+  margin: 5px;
+  padding: 8px 12px;
+  border: none;
+  background-color: #d5c6e0;
+  border-radius: 10px;
+  cursor: pointer;
+}
+
+.review-item {
+  background: #f9f9f9;
+  margin-bottom: 20px;
+  border-radius: 15px;
+  padding: 20px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  list-style-type: none;
+}
+
+/* p {
+  display: flex;
+} */
+
+.review-item {
+  background-color: #ffffff;
+  border-radius: 12px;
+  padding: 20px;
+  margin-bottom: 20px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.review-title {
+  font-size: 1.4rem;
+  font-weight: 600;
+  color: #2c3e50;
+  margin-bottom: 5px;
+  margin-top: 0;
+}
+
+.review-summary {
+  display: flex;
+  gap: 20px;
+  align-items: flex-start;
+  flex-wrap: wrap;
+}
+/* .review-summary {
+  flex-wrap: nowrap; 
+} */
+
+.review-summary img {
+  max-width: 100%;
+  max-height: 300px;
+  object-fit: cover;
+  border-radius: 10px;
+  margin-top: 3px;
+  /* flex-shrink: 0; */
+}
+
+.review-actions {
+  display: flex;
+  gap: 10px;
+  justify-content: flex-end;
+  margin-top: 10px;
+}
+
+.comments {
+  margin-top: 15px;
+  border-top: 1px solid #ddd;
+  padding-top: 5px;
+}
+
+.comment-list {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 15px 0px;
+}
+
+.comment-list li {
+  background-color: #f1f1f1;
+  padding: 8px 12px;
+  margin-bottom: 6px;
+  border-radius: 6px;
+  font-size: 0.95rem;
+}
+
+.comment-input {
+  width: 100%;
+  min-height: 60px;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  resize: vertical;
+  font-size: 0.95rem;
+  margin-bottom: 8px;
+}
+
+.comment-btn {
+  padding: 6px 12px;
+  background-color: #a772d2;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.review-content-preview {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%;
+  display: block;
+  margin-top: 5px;
+  color: #666;
+  font-style: italic;
+}
+
+a {
+  color: white;
+  text-decoration: none;
+}

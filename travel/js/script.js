@@ -14,6 +14,21 @@ function getCountryName(id) {
   return countryNames[id] || 'Unknown';
 }
 
+
+async function askGPT(prompt) {
+  const res = await fetch("http://localhost:3000/gpt", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({ prompt })
+  });
+
+  const data = await res.json();
+  return data.choices?.[0]?.message?.content;
+}
+
+
 function getRecommendation(countryId, budget, style) {
   return `${getCountryName(countryId)}에서 ${budget} 예산으로 ${style} 여행을 즐겨보세요! 😊`;
 }
@@ -183,3 +198,18 @@ chatbotBtn.addEventListener('click', () => {
   chatbotWindow.classList.toggle('hidden');
 });
 */
+
+document.getElementById('ai-submit').addEventListener('click', async () => {
+  const input = document.getElementById('ai-input').value.trim();
+  if (!input) return alert("여행 정보를 입력해주세요!");
+
+  const prompt = `
+    너는 여행 플래너야. 다음 조건에 맞는 3일 일정과 예상 비용을 포함해서 알려줘.
+    ${input}
+    - 각 Day를 아침/점심/저녁 + 관광지 형태로 구성하고 예상 비용도 함께 써줘.
+  `;
+
+  // GPT 호출 함수 실행 (이건 너가 만든 askGPT() 함수)
+  const result = await askGPT(prompt);
+  console.log(result); // ← 이건 다음 파싱 단계에서 쓸 것
+});

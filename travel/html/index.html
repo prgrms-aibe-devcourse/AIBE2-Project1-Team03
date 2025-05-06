@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>여행 스타일 추천</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  
+  <link href="https://fonts.googleapis.com/css2?family=Pretendard&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../css/style.css">
+  <link rel="stylesheet" href="../css/main.css">
+  <link rel="icon" href="../img/favicon-32x32.png">
+
+</head>
+<body>
+    <div id="navbar-container"></div>
+  <header>
+    <h1>나만의 여행을 시작해보세요</h1>
+    <p>여행 정보를 입력하면 추천해드립니다!</p>
+  </header>
+
+  <section class="filter-section">
+    <h2>여행 정보 입력</h2>
+    <form id="filterForm">
+      <div class="input-row">
+        <label>최소 예산($)</label>
+        <input type="number" name="minBudget" placeholder="예: 1500" required />
+      </div>
+      <div class="input-row">
+        <label>최대 예산($)</label>
+        <input type="number" name="maxBudget" placeholder="예: 2000" required />
+      </div>
+      <div class="input-row">
+        <label>여행 일수</label>
+        <input type="number" name="days" placeholder="예: 5" min="1" required />
+      </div>
+      <div class="input-row">
+        <label>여행 스타일</label>
+        <input type="text" name="travelStyle" placeholder="예: 여유로운, 빡센 일정, 휴식 중심 등" required/>
+      </div>
+      <div class="input-row">
+        <label>관심사</label>
+        <input type="text" name="interests" placeholder="예: 맛집 탐방, 미술관, 트레킹, 쇼핑 등" required/>
+      </div>
+      <div class="input-row">
+        <label>나라</label>
+        <select name="country" id="country-select">
+          <option value="">선택 안 함</option>
+          <option value="KR">대한민국</option>
+          <option value="JP">일본</option>
+          <option value="FR">프랑스</option>
+          <option value="US">미국</option>
+          <option value="IT">이탈리아</option>
+        </select>
+      </div>
+      
+      <div class="input-row">
+        <label>여행 지역 (선택)</label>
+        <select name="region" id="region-select">
+          <option value="">선택 안 함</option>
+        </select>
+      </div>
+      </div>
+      <button type="submit" class="recommend-btn">여행 추천 받기 ✈️</button>
+      <button type="button" id="ai-smart-recommend-btn"
+    class="recommend-btn" >
+    AI로 일정 추천 받기! 🤖
+    </button>
+    </form>
+    
+  </section>
+
+  <script>
+    // '여행 추천 받기 ✈️' 버튼 (form 이동용)
+  document.querySelector('.recommend-btn[type="submit"]').addEventListener('click', (e) => {
+  const form = document.getElementById('filterForm');
+  if (!form.checkValidity()) {
+    form.reportValidity();
+    e.preventDefault();  // ✅ 유효성 통과 못했을 때는 이동 막기
+    return;
+  }
+
+  const params = new URLSearchParams(new FormData(form)).toString();
+  window.location.href = `map.html?${params}`;
+  });
+  </script>
+
+
+<!-- ✅ AI 일정 표시용 패널 -->
+<div id="ai-panel" style="display: none;">
+  <div id="ai-panel-close">
+    <button onclick="document.getElementById('ai-panel').style.display='none'">✖ 닫기</button>
+  </div>
+  <h2>✈️ AI 여행 일정</h2>
+  <div id="ai-day-buttons" style="margin-bottom: 1rem;"></div>
+  <div id="ai-map" style="width: 100%; height: 300px; margin-bottom: 1rem;"></div>
+  <div id="ai-itinerary-list" style="background: #f9f9f9; padding: 1rem;"></div>
+  <button id="save-itinerary-btn" class="recommend-btn" style="background-color: #2196F3; margin-top: 10px;">
+    📌 일정 저장하기
+  </button>
+</div>
+
+
+<!-- ✅ AI 응답 원본 저장용 (보이게 할 필요는 없음) -->
+<div id="gemini-itinerary" style="display: none;"></div>
+
+<!-- ⏳ AI 일정 로딩 표시 -->
+<div id="loading-overlay" style="display: none">
+  <div class="spinner"></div>  <!-- ✅ 이거 -->
+  <p>AI가 여행 일정을 생성 중입니다... ✈️</p>
+</div>
+   <!-- 상단 메뉴바 -->
+   <script>
+    fetch('navbar.html')
+      .then(response => response.text())
+      .then(html => {
+        document.getElementById('navbar-container').innerHTML = html;
+      })
+      .then(() => {
+        
+        const script = document.createElement('script');
+        script.type = 'module';
+        script.src = '../js/navbar.js';  // 로그인 처리하는 JS
+        document.body.appendChild(script);
+      });
+  </script>
+  
+  <script type="module" src="../js/aiSchedule.js"></script>
+<script async defer
+  src="https://maps.googleapis.com/maps/api/js?key=AIzaSyA5ueda7Qmq4m_agO069YgX82NkEhJCzRY&libraries=places">
+</script>
+
+</body>
+</html>

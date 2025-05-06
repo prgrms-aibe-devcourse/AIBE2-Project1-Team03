@@ -5,7 +5,10 @@ import {
   collection,
   doc,
   addDoc,
-  serverTimestamp
+  serverTimestamp,
+  query,
+  where,
+  getDocs
 } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
 
 import { capitalKoMap } from './capital-ko-map.js'; 
@@ -154,28 +157,39 @@ async function loadPlacesForCountry(code) {
     document.getElementById('tourist').innerHTML = '<p>수도 정보 없음</p>';
     return;
   }
+
   const proxy = 'http://localhost:8080/';
+
+  // 필터 함수: 주소에 도시명 포함된 장소만 통과
+  const isInCity = (place) => {
+    const addr = place.formatted_address || place.vicinity || '';
+    return addr.includes(city) || addr.includes(capitalKoMap[city] || '');
+  };
+
   // 관광지
   let res = await fetch(proxy + `https://maps.googleapis.com/maps/api/place/textsearch/json?query=${encodeURIComponent(city + ' 관광지')}&language=ko&key=${googlePlacesKey}`);
   let data = await res.json();
-  currentPlaces = data.status === 'OK' ? data.results : [];
+  currentPlaces = data.status === 'OK' ? data.results.filter(isInCity) : [];
+
   // 맛집
   res = await fetch(proxy + `https://maps.googleapis.com/maps/api/place/textsearch/json?query=${encodeURIComponent(city + ' 맛집')}&language=ko&key=${googlePlacesKey}`);
   data = await res.json();
-  currentRestaurants = data.status === 'OK' ? data.results : [];
+  currentRestaurants = data.status === 'OK' ? data.results.filter(isInCity) : [];
+
   // 호텔
   res = await fetch(proxy + `https://maps.googleapis.com/maps/api/place/textsearch/json?query=${encodeURIComponent(city + ' 호텔')}&language=ko&key=${googlePlacesKey}`);
   data = await res.json();
-  currentHotels = data.status === 'OK' ? data.results : [];
+  currentHotels = data.status === 'OK' ? data.results.filter(isInCity) : [];
+
   // 공항
-   res = await fetch(proxy +
+  res = await fetch(proxy +
     `https://maps.googleapis.com/maps/api/place/textsearch/json?` +
     `query=${encodeURIComponent(city + ' 공항')}` +
     `&language=ko&key=${googlePlacesKey}`
   );
   data = await res.json();
-  currentAirports = data.status === 'OK' ? data.results : [];
-  
+  currentAirports = data.status === 'OK' ? data.results.filter(isInCity) : [];
+
   // 초기 선택 초기화
   selectedPlaces = [];
   selectedRestaurants = [];
@@ -289,17 +303,22 @@ function renderMarkersOnMap(items) {
 }
 
 // ----------------- 일정 생성 -----------------
-function createDailyItinerary() {
-  // 유저가 선택한 게 없으면 자동 검색된 리스트 사용
+// ----------------- 일정 생성 -----------------
+async function createDailyItinerary() {
   const touristsRaw = selectedPlaces.length ? selectedPlaces : currentPlaces;
   const restaurantsRaw = selectedRestaurants.length ? selectedRestaurants : currentRestaurants;
-  const hotel = currentHotels[0] || {};
+
+  // geometry가 있는 항목만 필터
+  const touristCandidates = touristsRaw.filter(p => p.geometry?.location);
+  const restaurantCandidates = restaurantsRaw.filter(p => p.geometry?.location);
+
+  // ✅ 실제 거리 기반 정렬
+  const tourists = await sortByRealDistance(departure, touristCandidates);
+  const restaurants = await sortByRealDistance(departure, restaurantCandidates);
+  const sortedHotels = await sortHotelsByDistanceToItineraryCenter();
+  const hotel = sortedHotels[0] || {};
   const airport = currentAirports[0] || null;
   const days = DAYS;
-
-  // ⚠ geometry 정보 없는 장소 제외
-  const tourists = sortByDistance(departure, touristsRaw.filter(p => p.geometry?.location));
-  const restaurants = sortByDistance(departure, restaurantsRaw.filter(p => p.geometry?.location));
 
   if (tourists.length === 0 && restaurants.length === 0) {
     alert("추천 가능한 관광지/식당이 없습니다. 다른 국가를 선택하거나 직접 선택해주세요.");
@@ -312,11 +331,9 @@ function createDailyItinerary() {
   for (let d = 1; d <= days; d++) {
     const day = [];
 
+    // Day 1: 출국
     if (d === 1) {
-      // 인천 출발
       day.push(departure);
-
-      // 도착지: 현지 공항 또는 호텔 좌표 fallback
       if (airport) {
         day.push({
           type: '도착',
@@ -334,7 +351,7 @@ function createDailyItinerary() {
       }
     }
 
-    // 오전 식당
+    // 오전 식사
     if (restaurants.length) {
       const p = restaurants[r % restaurants.length]; r++;
       day.push(toPlaceObj(p, '식당'));
@@ -346,13 +363,13 @@ function createDailyItinerary() {
       day.push(toPlaceObj(p, '관광지'));
     }
 
-    // 오후 식당
+    // 오후 식사
     if (restaurants.length) {
       const p = restaurants[r % restaurants.length]; r++;
       day.push(toPlaceObj(p, '식당'));
     }
 
-    // 숙소
+    // 숙소 (마지막 날 제외)
     if (hotel.name && d < days) {
       day.push({
         type: '숙소',
@@ -363,7 +380,7 @@ function createDailyItinerary() {
       });
     }
 
-    // 마지막 날 복귀
+    // 마지막 날: 귀국
     if (d === days) {
       if (airport) {
         day.push({
@@ -380,7 +397,6 @@ function createDailyItinerary() {
           lng: hotel.geometry.location.lng
         });
       }
-
       day.push({
         type: '도착',
         name: departure.name,
@@ -395,31 +411,23 @@ function createDailyItinerary() {
   return itn;
 }
 
-// 🔍 가까운 거리 순 정렬
-function sortByDistance(start, list) {
-  const result = [];
-  let current = { lat: start.lat, lng: start.lng };
-  const remaining = [...list];
 
-  while (remaining.length) {
-    remaining.sort((a, b) => distance(current, a) - distance(current, b));
-    const next = remaining.shift();
-    result.push(next);
-    current = {
-      lat: next.geometry.location.lat,
-      lng: next.geometry.location.lng
-    };
+// ----------------- 호텔 거리 정렬 -----------------
+async function sortHotelsByDistanceToItineraryCenter() {
+  if (selectedPlaces.length === 0 && selectedRestaurants.length === 0) {
+    return currentHotels.slice(0, 3);  // 기본 상위 3개
   }
 
-  return result;
+  const all = [...selectedPlaces, ...selectedRestaurants];
+  const avgLat = all.reduce((sum, p) => sum + p.geometry.location.lat, 0) / all.length;
+  const avgLng = all.reduce((sum, p) => sum + p.geometry.location.lng, 0) / all.length;
+  const center = { lat: avgLat, lng: avgLng };
+
+  const sorted = await sortByRealDistance(center, currentHotels);
+  return sorted.slice(0, 3); // 상위 3개 반환
 }
 
-// 거리 계산 (유클리드 거리)
-function distance(a, b) {
-  const dx = a.lat - b.geometry.location.lat;
-  const dy = a.lng - b.geometry.location.lng;
-  return Math.sqrt(dx * dx + dy * dy);
-}
+
 
 // 목적지 객체 포맷
 function toPlaceObj(p, type) {
@@ -431,6 +439,8 @@ function toPlaceObj(p, type) {
     lng: p.geometry.location.lng
   };
 }
+
+
 
 
 // ----------------- Day 버튼 렌더링 -----------------
@@ -472,19 +482,17 @@ function showDayMarkers(dayIdx) {
 }
 
 // ----------------- 일정 생성 버튼 -----------------
-document.getElementById('generate-itinerary-btn').addEventListener('click', () => {
+document.getElementById('generate-itinerary-btn').addEventListener('click', async () => {
   if (!lastSelectedId) {
     alert('먼저 국가를 선택해 주세요!');
     return;
   }
-  const itin = createDailyItinerary();
-  window.globalItinerary = itin;           // 전역으로 저장
-  renderDayButtons(itin);                  // Day 버튼 추가
-  // 전체 경로 (숙소/공항 제외)
-  openLeftSidePanel();
 
-// Day 1 마커 찍기
-showDayMarkers(0);
+  const itin = await createDailyItinerary(); // 비동기 호출
+  window.globalItinerary = itin;
+  renderDayButtons(itin);
+  openLeftSidePanel();
+  showDayMarkers(0);
 });
 
 
@@ -560,12 +568,21 @@ document.getElementById('save-itinerary-btn')
     try {
       // users/{uid}/itineraries 컬렉션 참조
       const itnColl = collection(db, 'users', user.uid, 'itineraries');
+
+      const q = query(itnColl, where('displayName', '==', displayName));
+      const querySnapshot = await getDocs(q);
+
+      if (!querySnapshot.empty) {
+        return alert('이미 동일한 이름의 일정이 있어요. 다른 이름을 입력해주세요.');
+      }
+      
       await addDoc(itnColl, {
         displayName,
         country: lastSelectedId,
         days: itinerary,
         updatedAt: serverTimestamp()
       });
+      
       alert('✅ 일정이 저장되었습니다!');
     } catch (err) {
       console.error(err);
@@ -578,3 +595,38 @@ document.getElementById('save-itinerary-btn')
   document.getElementById("review-btn").addEventListener("click", () => {
     window.location.href = "/review.html"; // 후기 페이지 경로
   });
+
+
+
+
+
+  // ----------------- 실제 거리 기반 정렬 -----------------
+  async function getDistanceMatrix(origin, places) {
+    const destinations = places
+      .map(p => `${p.geometry.location.lat},${p.geometry.location.lng}`)
+      .join('|');
+    const originStr = `${origin.lat},${origin.lng}`;
+    const url = `https://maps.googleapis.com/maps/api/distancematrix/json?origins=${originStr}&destinations=${destinations}&mode=driving&language=ko&key=${googlePlacesKey}`;
+    const proxy = 'http://localhost:8080/'; // CORS 우회
+    const res = await fetch(proxy + url);
+    const data = await res.json();
+  
+    if (data.status !== 'OK') {
+      console.warn('Distance Matrix API 오류:', data);
+      return places.map(p => ({ place: p, distance: Infinity }));
+    }
+  
+    return data.rows[0].elements.map((el, idx) => ({
+      place: places[idx],
+      distance: el.status === 'OK' ? el.distance.value : Infinity
+    }));
+  }
+
+  async function sortByRealDistance(origin, places) {
+    const limited = places.slice(0, 10); // API 제한 때문에 최대 10개
+    const results = await getDistanceMatrix(origin, limited);
+    return results.sort((a, b) => a.distance - b.distance).map(el => el.place);
+  }
+
+
+

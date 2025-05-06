@@ -1,10 +1,11 @@
 body {
     margin: 0;
     font-family: 'Pretendard', sans-serif;
-    background: #f3f5f5;
+    background: #fefefe;
     color: #333;
     
   }
+ 
   input, button {
     padding: 10px;
     margin: 10px 0;
@@ -73,16 +74,10 @@ body {
   }
 
   .search-section h1 {
-    margin-bottom: 20px;
-    font-size: 28px;
-    color: #333;
+    font-size: 32px;
+    color: #1976d2;
+    margin-bottom: 10px;
   }
-
-
-
-
-
-
 
 
 
@@ -141,3 +136,19 @@ body {
 
 
   
+  #category-select {
+    padding: 0.5rem 1rem;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+    font-size: 1rem;
+    margin-left: 10px;
+    background-color: #fff;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+  
+  #category-select:focus {
+    border-color: #8a60d1;
+    box-shadow: 0 0 0 3px rgba(138, 96, 209, 0.2);
+    outline: none;
+  }

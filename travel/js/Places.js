@@ -1,3 +1,5 @@
+import { koToEnMap } from './capital-ko-map.js';
+
 const apiKey = "AIzaSyA5ueda7Qmq4m_agO069YgX82NkEhJCzRY"; 
 document.getElementById('search-btn').addEventListener('click', async () => {
   await loadPlaces();
@@ -5,28 +7,42 @@ document.getElementById('search-btn').addEventListener('click', async () => {
 
 async function loadPlaces() {
   const city = document.getElementById('city-input').value.trim();
+  const category = document.getElementById('category-select').value;  // 🔥 추가
+
   if (!city) {
     showAlert("도시 이름을 입력하세요!");
     return;
   }
 
   try {
-    const places = await searchPlaces(city);
+    const places = await searchPlaces(city, category);  // 🔥 category도 넘김
     renderPlaces(places);
   } catch (error) {
     console.error('에러 발생:', error);
   }
 }
 
-async function searchPlaces(city) {
-    const corsProxy = "http://localhost:8080/";
-    const apiUrl = `https://maps.googleapis.com/maps/api/place/textsearch/json?query=${encodeURIComponent(city)} 관광지&language=ko&key=${apiKey}`;
-    const response = await fetch(corsProxy + apiUrl);
+async function searchPlaces(city, category) {
+  const corsProxy = "http://localhost:8080/";
+  const query = `${city} ${category}`;
+  const apiUrl = `https://maps.googleapis.com/maps/api/place/textsearch/json?query=${encodeURIComponent(query)}&language=ko&key=${apiKey}`;
+
+  const response = await fetch(corsProxy + apiUrl);
   const data = await response.json();
   if (data.status !== "OK") {
     throw new Error(data.error_message || "장소 검색 실패");
   }
-  return data.results;
+
+  // 🔥 한글 도시명 → 영어 변환
+  const cityEng = koToEnMap[city] || city;
+  const cityKo = city;
+
+  const filteredResults = data.results.filter(place => {
+  const addr = place.formatted_address || '';
+  return addr.includes(cityEng) || addr.includes(cityKo);  // 🔥 둘 다 체크
+});
+
+  return filteredResults;
 }
 
 function renderPlaces(places) {

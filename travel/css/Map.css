@@ -3,13 +3,14 @@ body {
   margin: 0; padding: 0;
   font-family: 'Noto Sans', sans-serif;
   overflow-x: hidden;
-  background: #fafafa;
+  background: #fefefe;
 }
 #map-container {
-  margin-left: 200px;
-  margin-top: 250px;
-  width: calc(100% - 200px);
-  max-width: 10000px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;         /* 화면 꽉 차게 */
+  box-sizing: border-box;
 }
 svg path:hover {
   fill: orange;

@@ -6,18 +6,26 @@
   <link rel="stylesheet" href="../css/style.css" />
   <link rel="stylesheet" href="../css/Places.css" />
   <link rel="icon" href="../img/favicon-32x32.png">
+  <link href="https://fonts.googleapis.com/css2?family=Pretendard&display=swap" rel="stylesheet">
 </head>
 <body>
 
 <div id="navbar-container"></div>
 
 <div class="search-section">
-    <h1>여행지를 검색 해보세요! ✈️</h1>
-    <div>
-      <input type="text" id="city-input" placeholder="도시 이름 입력 (예: 도쿄)">
-      <button id="search-btn">검색</button>
-    </div>
+  <h1>여행지를 검색 해보세요! ✈️</h1>
+  <div class="search-box">
+    <input type="text" id="city-input" placeholder="도시 이름 입력 (예: 도쿄)">
+    
+    <select id="category-select">
+      <option value="관광지">관광지</option>
+      <option value="맛집">맛집</option>
+      <option value="숙소">숙소</option>
+    </select>
+
+    <button id="search-btn">검색</button>
   </div>
+</div>
 
 <div id="places-container"></div>
 

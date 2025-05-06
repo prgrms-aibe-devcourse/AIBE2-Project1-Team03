@@ -37,7 +37,6 @@ const db = getFirestore(app);
 document.addEventListener("DOMContentLoaded", function () {
     const writeReviewBtn = document.getElementById("write-review-btn");
     const myReviewsBtn = document.getElementById("my-review-btn");
-    renderReviews("all"); // 초기 전체 렌더링
 
     let messageListenerAdded = false;
 

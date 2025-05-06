@@ -51,24 +51,29 @@ document.addEventListener("DOMContentLoaded", function () {
             // });
 
             writeReviewBtn.addEventListener("click", () => {
-                const newWindow = window.open("newReview.html", "newReview", "width=600,height=400");
+                const newWindow = window.open("newReview.html", "newReview", "width=700,height=700");
 
                 if (!messageListenerAdded) {
                     window.addEventListener("message", async function (event) {
-                        if (event.origin === window.location.origin && event.data) {
+                        if (
+                            event.origin === window.location.origin &&
+                            event.data &&
+                            event.data.title &&
+                            event.data.content &&
+                            event.data.country
+                          ) {
                             const reviewData = {
-                                ...event.data,
-                                email: user.email,
-                                uid: user.uid,
-                                createdAt: Timestamp.now(),
-                                comments: []
+                              ...event.data,
+                              email: user.email,
+                              uid: user.uid,
+                              createdAt: Timestamp.now(),
+                              comments: []
                             };
-
                             await saveReview(reviewData);
-
+                          
                             const selectedContinent = document.querySelector('input[name="continent"]:checked')?.id.replace("radio-", "") || "모두";
                             renderReviews(selectedContinent);
-                        }
+                          }
                     });
                     messageListenerAdded = true;
                 }
@@ -156,7 +161,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 li.innerHTML = `
                     <p class="review-title"><strong>${review.title}</strong></p>  
                     <div class="review-summary">
-                        <img src="${review.imageUrl}" alt="Review Image">
+                    ${review.imageUrl ? `<img src="${review.imageUrl}" alt="Review Image">` : ""}
                         <div class="review-meta">
                         <p><strong>🚩:</strong> ${review.country}</p>
                         <p><strong>👤:</strong> ${review.email}</p>
@@ -186,26 +191,82 @@ document.addEventListener("DOMContentLoaded", function () {
                 li.querySelector(".review-summary").addEventListener("click", openReviewPopup);
                 li.querySelector(".review-content-preview").addEventListener("click", openReviewPopup); 
                 function openReviewPopup() {
-                    const popup = window.open("", "reviewPopup", "width=500,height=400");
+                    const popup = window.open("", "reviewPopup", "width=700,height=2000");
                     popup.document.write(`
                         <html>
-                            <head>
-                                <title>리뷰 상세 보기</title>
-                                <style>
-                                    body { font-family: sans-serif; padding: 20px; }
-                                    h2 { margin-bottom: 10px; }
-                                    p { white-space: pre-wrap; }
-                                </style>
-                            </head>
-                            <body>
+                            <head> 
+                            <title>리뷰 상세 보기</title>
+                            <style>
+                                body {
+                                    margin: 0;
+                                    padding: 0;
+                                    font-family: 'Noto Sans KR', sans-serif;
+                                    background-color: #f0f4f8;
+                                    display: flex;
+                                    justify-content: center;
+                                }
+                                .card {
+                                    background-color: #fff;
+                                    border-radius: 16px;
+                                    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+                                    max-width: 700px;
+                                    width: 100%;
+                                    padding: 24px;
+                                    margin-top: 0; 
+                                }
+                                h2 {
+                                    font-size: 1.8em;
+                                    font-weight: 700;
+                                    color: #2c3e50;
+                                    margin-top: 0; 
+                                    margin-bottom: 16px;
+                                }
+                                img {
+                                    width: 100%;
+                                    border-radius: 12px;
+                                    margin-bottom: 20px;
+                                }
+                                .info {
+                                    display: flex;
+                                    flex-direction: column;
+                                    gap: 8px;
+                                    font-size: 0.95em;
+                                    color: #34495e;
+                                }
+                                .info p {
+                                    margin: 0;
+                                }
+                                .info span {
+                                    margin-left: 6px;
+                                }
+                                .content {
+                                    line-height: 1.6;
+                                    font-size: 1em;
+                                    color: #555;
+                                    white-space: pre-line;
+                                }
+                                hr {
+                                    margin: 20px 0;
+                                    border: none;
+                                    border-top: 1px solid #ddd;
+                                }
+                            </style>
+                        </head>
+                        <body>
+                            <div class="card">
                                 <h2>${review.title}</h2>
-                                ${review.imageUrl ? `<img src="${review.imageUrl}" style="max-width:100%;">` : ""}
-                                <p><strong>국가:</strong> ${review.country}</p>
-                                <p><strong>작성자:</strong> ${review.email}</p>
-                                <p><strong>작성일:</strong> ${createdAtString}</p>
+                                ${review.imageUrl ? `<img src="${review.imageUrl}">` : ""}
+                                <div class="info">
+                                    <p>📍<span>${review.country}</span></p>
+                                    <p>👤<span>${review.email}</span></p>
+                                    <p>📅<span>${createdAtString}</span></p>
+                                </div>
                                 <hr>
-                                <p>${review.content}</p>
-                            </body>
+                                <div class="content">
+                                    ${review.content}
+                                </div>
+                            </div>
+                        </body>
                         </html>
                     `);
                 }

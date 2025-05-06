@@ -1,107 +1,142 @@
 body {
-    margin: 0;
-    padding: 0;
-    font-family: 'Noto Sans KR', sans-serif;
-    background-color: #f9f9f9;
-  }
+  margin: 0;
+  padding: 0;
+  font-family: 'Noto Sans KR', sans-serif;
+  background-color: #f9f9f9;
+}
 
-  /* 네비게이션 바 영역 확보 */
-  header {
-    height: 60px;
-    background-color: #ffffff;
-    border-bottom: 1px solid #ddd;
-    display: flex;
-    align-items: center;
-    padding: 0 20px;
-    font-size: 20px;
-    font-weight: bold;
-  }
+header {
+  text-align: center;
+  padding: 10px;
+}  
 
-  main {
-    padding: 80px 20px 20px 20px;
-    max-width: 900px;
-    margin: 0 auto;
-  }
+main {
+  padding: 80px 20px 20px 20px;
+  max-width: 900px;
+  margin: 0 auto;
+}
 
-  button {
-    background-color: #4caf50;
-    border: none;
-    color: white;
-    padding: 8px 16px;
-    margin-top: 10px;
-    border-radius: 6px;
-    cursor: pointer;
-  }
+button {
+  margin: 5px;
+  padding: 8px 12px;
+  border: none;
+  background-color: #a772d2;
+  color: white;
+  border-radius: 10px;
+  cursor: pointer;
+}
 
-  button:hover {
-    background-color: #388e3c;
-  }
+/* 라디오 버튼 스타일 */
+.radio {
+  opacity: 0;
+}
 
-  input[type="text"], textarea, select {
-    width: 100%;
-    padding: 10px;
-    margin-top: 6px;
-    margin-bottom: 16px;
-    border: 1px solid #ccc;
-    border-radius: 6px;
-    box-sizing: border-box;
-  }
+#continent-city {
+  /* display: flex; */
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+}
 
-  .review-item {
-    background-color: white;
-    padding: 20px;
-    margin-bottom: 20px;
-    border-radius: 10px;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-  }
+#continent-buttons div {
+  display: flex;
+  align-items: center;
+}
 
-  .review-title {
-    font-size: 18px;
-    font-weight: bold;
-    margin-bottom: 8px;
-  }
+#continent-buttons {
+  display: flex;
+  margin-bottom: 16px;
+}
 
-  .review-summary {
-    font-size: 14px;
-    color: #555;
-  }
+input[type=radio]:checked + label {
+  margin: 5px;
+  padding: 8px 12px;
+  border: none;
+  background-color: #d5c6e0;
+  border-radius: 10px;
+  cursor: pointer;
+}
 
-  img {
-    max-width: 100%;
-    border-radius: 8px;
-    margin-top: 10px;
-  }
+/* 체크박스 스타일 */
+#city-checkboxes {
+  margin-bottom: 20px;
+  justify-content: space-between;
+  align-items: center;
 
-  .review-actions {
-    margin-top: 10px;
-    display: flex;
-    gap: 8px;
-  }
+}
 
-  .comments {
-    margin-top: 12px;
-    background: #f0f0f0;
-    padding: 10px;
-    border-radius: 8px;
-  }
+.continent-view {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-left: 30px;
+}  
 
-  .comment-input {
-    width: 100%;
-    height: 60px;
-    margin-top: 10px;
-    padding: 8px;
-    border-radius: 6px;
-    border: 1px solid #bbb;
-  }
+.continent-view input[type="checkbox"] {
+  accent-color: #50bfa0;
+}
 
-  .comment-list {
-    list-style: none;
-    padding-left: 0;
-  }
+.continent-view label {
+  margin-right: 20px
+}
 
-  .comment-list li {
-    margin-bottom: 6px;
-    background: #fff;
-    padding: 6px 8px;
-    border-radius: 5px;
-  }
+/* 라디오 버튼 가운데 정렬 */
+#continent-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
+/* 체크박스 버튼 가운데 정렬 */
+#city-checkboxes {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  /* margin-bottom: 16px; */
+}
+
+/* 리뷰 작성 영역 가운데 정렬 */
+#review-writte {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  /* margin-top: 30px; */
+}
+
+input[type="text"], textarea, select {
+  width: 90%;
+  padding: 10px;
+  border: 1px solid #ccc;
+  box-sizing: border-box;
+  background-color: white;
+  border-radius: 10px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  font-family: 'Noto Sans KR'
+}
+
+.review-item {
+  background-color: white;
+  /* padding: 20px; */
+  margin-bottom: 20px;
+  border-radius: 10px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.review-text {
+  background-color: white;
+  /* padding: 20px; */
+  margin-bottom: 20px;
+  border-radius: 10px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+#review-form {
+  max-width: 80%;
+  margin: auto;
+  padding: 20px;
+  background-color: #ffffff;
+  border-radius: 16px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}

@@ -627,3 +627,6 @@ document.getElementById('save-itinerary-btn')
     const results = await getDistanceMatrix(origin, limited);
     return results.sort((a, b) => a.distance - b.distance).map(el => el.place);
   }
+
+
+

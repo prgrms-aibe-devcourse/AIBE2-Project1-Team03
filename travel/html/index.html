@@ -35,8 +35,16 @@
         <input type="number" name="days" placeholder="예: 5" min="1" required />
       </div>
       <div class="input-row">
-        <label>강조할 국가 (선택 사항)</label>
-        <select name="country">
+        <label>여행 스타일</label>
+        <input type="text" name="travelStyle" placeholder="예: 여유로운, 빡센 일정, 휴식 중심 등" />
+      </div>
+      <div class="input-row">
+        <label>관심사</label>
+        <input type="text" name="interests" placeholder="예: 맛집 탐방, 미술관, 트레킹, 쇼핑 등" />
+      </div>
+      <div class="input-row">
+        <label>나라</label>
+        <select name="country" id="country-select">
           <option value="">선택 안 함</option>
           <option value="KR">대한민국</option>
           <option value="JP">일본</option>
@@ -44,9 +52,16 @@
           <option value="US">미국</option>
           <option value="IT">이탈리아</option>
         </select>
+        <label>여행 지역 (선택)</label>
+<select name="region" id="region-select">
+  <option value="">선택 안 함</option>
+</select>
       </div>
       <button type="submit" class="recommend-btn">여행 추천 받기 ✈️</button>
     </form>
+    <button type="button" id="ai-smart-recommend-btn" class="recommend-btn" style="background-color: #4CAF50; margin-top: 10px;">
+      AI로 일정 추천 받기! 🤖
+    </button>
   </section>
 
   <script>
@@ -57,6 +72,25 @@
         window.location.href = `map.html?${params}`;
       });
   </script>
+
+
+<!-- ✅ AI 일정 표시용 패널 -->
+<div id="ai-panel" style="display: none;">
+  <div id="ai-panel-close">
+    <button onclick="document.getElementById('ai-panel').style.display='none'">✖ 닫기</button>
+  </div>
+  <h2>✈️ AI 여행 일정</h2>
+  <div id="ai-day-buttons" style="margin-bottom: 1rem;"></div>
+  <div id="ai-map" style="width: 100%; height: 300px; margin-bottom: 1rem;"></div>
+  <div id="ai-itinerary-list" style="background: #f9f9f9; padding: 1rem;"></div>
+  <button id="save-itinerary-btn" class="recommend-btn" style="background-color: #2196F3; margin-top: 10px;">
+    📌 일정 저장하기
+  </button>
+</div>
+
+
+<!-- ✅ AI 응답 원본 저장용 (보이게 할 필요는 없음) -->
+<div id="gemini-itinerary" style="display: none;"></div>
 
    <!-- 상단 메뉴바 -->
    <script>
@@ -73,6 +107,11 @@
         document.body.appendChild(script);
       });
   </script>
+  
+  <script type="module" src="../js/aiSchedule.js"></script>
+<script async defer
+  src="https://maps.googleapis.com/maps/api/js?key=AIzaSyA5ueda7Qmq4m_agO069YgX82NkEhJCzRY&libraries=places">
+</script>
 
 </body>
 </html>

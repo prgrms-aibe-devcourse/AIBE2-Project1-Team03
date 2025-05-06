@@ -223,6 +223,19 @@ function switchTab(scheduleName) {
   currentSchedule = scheduleName;
   renderTabs();
   renderDays();
+
+  if (scheduleName === "나의 일정") {
+    const { daysData } = schedules["나의 일정"];
+    const allPlaces = Object.values(daysData).flat();
+    document.getElementById("my-schedule-map").style.display = "block";
+  
+    getCoordinatesFromPlaces(Object.values(daysData)).then(coords => {
+      initMyMap(coords[0] || { lat: 34.0522, lng: -118.2437 });
+      renderMyMarkers(coords);
+    });
+  } else {
+    document.getElementById("my-schedule-map").style.display = "none";
+  }
 }
 
 // -------------- 일정 추가 -------------
@@ -311,6 +324,15 @@ function createDayElement(day) {
 
   const dayButtons = createDayButtons(day);
 
+  // 지도 버튼 추가
+  const mapBtn = document.createElement('button');
+  mapBtn.textContent = '지도 보기';
+  mapBtn.className = 'map-button';
+  mapBtn.style.marginLeft = '12px';
+  mapBtn.onclick = () => showMapForDay(day);
+
+  dayButtons.appendChild(mapBtn);
+
   dayHeader.appendChild(leftSide);
   dayHeader.appendChild(dayButtons);
   dayDiv.appendChild(dayHeader);
@@ -324,6 +346,7 @@ function createDayElement(day) {
 
   return dayDiv;
 }
+
 
 // -------------- Day 수정/삭제 버튼 -------------
 function createDayButtons(day) {
@@ -375,12 +398,13 @@ function createDestinationElement(day, dest) {
 
   function getTypeClass(type) {
     switch (type) {
-      case "출발": return "type-start";
-      case "도착": return "type-end";
-      case "식당": return "type-restaurant";
-      case "관광지": return "type-attraction";
+      case "오전": return "type-morning";
+      case "점심": return "type-lunch";
+      case "오후": return "type-afternoon";
+      case "저녁": return "type-evening";
       case "숙소": return "type-hotel";
-      default: return ""; // 지정되지 않은 타입
+      case "공항": return "type-airport";
+      default: return "";
     }
   }
 
@@ -395,6 +419,12 @@ function createDestinationElement(day, dest) {
   addressDiv.textContent = dest.address || '';
 
   contentWrapper.appendChild(nameRow);
+
+  const descDiv = document.createElement('div');
+  descDiv.className = 'destination-description';
+  descDiv.textContent = dest.description || '';
+  contentWrapper.appendChild(descDiv);
+
   contentWrapper.appendChild(addressDiv);
 
   const buttonsDiv = createDestinationButtons(day, dest);
@@ -411,11 +441,38 @@ function createDestinationButtons(day, dest) {
   const container = document.createElement('div');
   container.className = 'destination-buttons';
 
-  const editBtn = createButton('수정', 'edit', () => editDestination(day, dest));
-  const deleteBtn = createButton('삭제', 'delete', () => deleteDestination(day, dest));
+  const menuWrapper = document.createElement('div');
+  menuWrapper.className = 'dropdown-menu-wrapper';
 
-  container.appendChild(editBtn);
-  container.appendChild(deleteBtn);
+  const menuToggle = document.createElement('button');
+  menuToggle.className = 'menu-toggle';
+  menuToggle.textContent = '︙';
+
+  const dropdown = document.createElement('div');
+  dropdown.className = 'dropdown-menu';
+  dropdown.innerHTML = `
+    <div class="menu-item">수정</div>
+    <div class="menu-item">삭제</div>
+  `;
+
+  // 클릭 이벤트 등록
+  dropdown.querySelector('.menu-item:nth-child(1)').onclick = () => editDestination(day, dest);
+  dropdown.querySelector('.menu-item:nth-child(2)').onclick = () => deleteDestination(day, dest);
+
+  // 열고 닫기
+  menuToggle.onclick = (e) => {
+    e.stopPropagation();
+    dropdown.classList.toggle('open');
+  };
+
+  // 외부 클릭 시 닫기
+  document.addEventListener('click', () => {
+    dropdown.classList.remove('open');
+  });
+
+  menuWrapper.appendChild(menuToggle);
+  menuWrapper.appendChild(dropdown);
+  container.appendChild(menuWrapper);
   return container;
 }
 
@@ -434,15 +491,14 @@ function addDestination() {
   const day = daySelect.value;
   const name = destinationInput.value.trim();
   if (!name) return;
-  const type = prompt('태그를 입력하세요 (출발, 도착, 관광지, 식당, 숙소):', '') || '';
-  const address = prompt('주소를 입력하세요:', '') || '';
-  schedules[currentSchedule].daysData[day].push({ name, type, address });
+
+  const type = prompt('시간대 태그를 입력하세요 (오전, 점심, 오후, 저녁, 숙소, 공항):', '') || '';
+  const description = prompt('장소에 대한 설명을 입력하세요:', '') || '';
+
+  schedules[currentSchedule].daysData[day].push({ name, type, description });
   destinationInput.value = '';
   renderDays();
-
-  // Firestore에도 저장
   saveToFirestore(currentSchedule);
-
 }
 
 // Day 추가
@@ -500,13 +556,17 @@ function deleteDay(day) {
 
 // 목적지 수정
 function editDestination(day, dest) {
-  const newName = prompt('목적지 이름 수정:', dest.name);
+  const newName = prompt('장소 이름 수정:', dest.name);
   if (newName) dest.name = newName;
-  const newTag = prompt('태그 수정:', dest.type);
+
+  const newTag = prompt('시간대 태그 수정 (오전, 점심, 오후, 저녁, 숙소, 공항):', dest.type);
   if (newTag) dest.type = newTag;
-  const newAddress = prompt('주소 수정:', dest.address || '');
-  if (newAddress !== null) dest.address = newAddress;
+
+  const newDesc = prompt('설명 수정:', dest.description || '');
+  if (newDesc !== null) dest.description = newDesc;
+
   renderDays();
+  saveToFirestore(currentSchedule);
 }
 
 // 목적지 삭제
@@ -688,3 +748,229 @@ function initialize() {
 
 addButton.addEventListener('click', addDestination);
 addDayButton.addEventListener('click', addDay);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+let myScheduleMap;
+
+function initMyMap(center = { lat: 34.0522, lng: -118.2437 }) {
+  myScheduleMap = new google.maps.Map(document.getElementById("my-schedule-map"), {
+    center,
+    zoom: 12
+  });
+}
+
+function renderMyMarkers(places) {
+  if (!myScheduleMap) initMyMap();
+
+  const bounds = new google.maps.LatLngBounds();
+
+  places.forEach((place, index) => {
+    const marker = new google.maps.Marker({
+      position: { lat: place.lat, lng: place.lng },
+      map: myScheduleMap,
+      label: `${index + 1}`,
+      title: place.name
+    });
+
+    const infoWindow = new google.maps.InfoWindow({
+      content: `<strong>${index + 1}. ${place.name}</strong>`
+    });
+
+    marker.addListener('click', () => {
+      infoWindow.open(myScheduleMap, marker);
+    });
+
+    bounds.extend(marker.getPosition());
+  });
+
+  myScheduleMap.fitBounds(bounds);
+}
+
+async function getCoordinatesFromPlaces(allDays) {
+  const proxy = 'http://localhost:8080/';
+  const key = 'AIzaSyA5ueda7Qmq4m_agO069YgX82NkEhJCzRY';
+
+  const region = 'LA';
+  const regionCenter = { lat: 34.0522, lng: -118.2437 };
+
+  const coords = [];
+
+  for (const day of allDays) {
+    for (const place of day) {
+      const query = encodeURIComponent(place.name);
+      const url = `${proxy}https://maps.googleapis.com/maps/api/place/textsearch/json?query=${query}&location=${regionCenter.lat},${regionCenter.lng}&radius=20000&key=${key}&language=ko`;
+
+      try {
+        const res = await fetch(url);
+        const data = await res.json();
+        if (data.status === 'OK' && data.results.length > 0) {
+          const loc = data.results[0].geometry.location;
+          coords.push({ name: place.name, lat: loc.lat, lng: loc.lng });
+        }
+      } catch (err) {
+        console.warn("좌표 가져오기 실패:", place.name);
+      }
+    }
+  }
+
+  return coords;
+}
+
+
+
+
+async function showMapForDay(day) {
+  const schedule = schedules[currentSchedule];
+  const places = schedule.daysData[day];
+  if (!places || places.length === 0) {
+    alert("해당 Day에 장소가 없습니다.");
+    return;
+  }
+
+  // 기존에 있던 지도 div 제거
+  const existingMap = document.getElementById(`map-${day}`);
+  if (existingMap) {
+    existingMap.remove();
+  }
+
+  // Day 블록 안에 새 div 추가
+  const dayDiv = Array.from(document.querySelectorAll('.day')).find(d =>
+    d.querySelector('h2')?.textContent === day
+  );
+  const mapDiv = document.createElement('div');
+  mapDiv.id = `map-${day}`;
+  mapDiv.style.height = '300px';
+  mapDiv.style.marginTop = '1rem';
+  mapDiv.style.borderRadius = '10px';
+  mapDiv.style.overflow = 'hidden';
+
+  dayDiv.appendChild(mapDiv);
+
+  // 지도 초기화
+  const map = new google.maps.Map(mapDiv, {
+    zoom: 13,
+    center: { lat: 34.0522, lng: -118.2437 } // 기본값: LA 중심
+  });
+
+  const coords = await getPlaceCoordinates(places.map(p => p.name), 'LA');
+  const bounds = new google.maps.LatLngBounds();
+
+  coords.forEach((place, index) => {
+    const marker = new google.maps.Marker({
+      position: { lat: place.lat, lng: place.lng },
+      map,
+      label: `${index + 1}`,
+      title: place.name
+    });
+
+    const infoWindow = new google.maps.InfoWindow({
+      content: `<strong>${index + 1}. ${place.name}</strong>`
+    });
+
+    marker.addListener('click', () => {
+      infoWindow.open(map, marker);
+    });
+
+    bounds.extend(marker.getPosition());
+  });
+
+  map.fitBounds(bounds);
+}
+
+
+
+
+async function getPlaceCoordinates(placeNames, region = '') {
+  const proxy = 'http://localhost:8080/';
+  const key = 'AIzaSyA5ueda7Qmq4m_agO069YgX82NkEhJCzRY';
+  const results = [];
+
+  const regionCenterMap = {
+    "오사카": { lat: 34.6937, lng: 135.5023 },
+    "도쿄": { lat: 35.6895, lng: 139.6917 },
+    "교토": { lat: 35.0116, lng: 135.7681 },
+    "삿포로": { lat: 43.0618, lng: 141.3545 },
+    "파리": { lat: 48.8566, lng: 2.3522 },
+    "로마": { lat: 41.9028, lng: 12.4964 },
+    "밀라노": { lat: 45.4642, lng: 9.1900 },
+    "뉴욕": { lat: 40.7128, lng: -74.0060 },
+    "LA": { lat: 34.0522, lng: -118.2437 },
+    "샌프란시스코": { lat: 37.7749, lng: -122.4194 },
+    "서울": { lat: 37.5665, lng: 126.9780 },
+    "부산": { lat: 35.1796, lng: 129.0756 },
+    "제주도": { lat: 33.4996, lng: 126.5312 },
+  };
+
+  const center = regionCenterMap[region] || { lat: 35.6895, lng: 139.6917 };
+
+  for (const name of placeNames) {
+    const query = encodeURIComponent(name);
+    const url = `${proxy}https://maps.googleapis.com/maps/api/place/textsearch/json?query=${query}&location=${center.lat},${center.lng}&radius=20000&key=${key}&language=ko`;
+
+    try {
+      const res = await fetch(url);
+      const data = await res.json();
+      if (data.status === 'OK' && data.results.length > 0) {
+        const loc = data.results[0].geometry.location;
+        results.push({ name, lat: loc.lat, lng: loc.lng });
+      }
+    } catch (err) {
+      console.warn('Place fetch error for:', name, err);
+    }
+  }
+
+  return results;
+}
+
+
+let myMap;
+function initMyMap(center = { lat: 35.6895, lng: 139.6917 }) {
+  if (!window.google || !google.maps) {
+    console.error("❌ Google Maps API 로드되지 않음!");
+    return;
+  }
+
+  myMap = new google.maps.Map(document.getElementById("map"), {
+    center,
+    zoom: 12
+  });
+}
+
+
+function renderAiMarkers(places) {
+  if (!myMap) return;
+  const bounds = new google.maps.LatLngBounds();
+
+  places.forEach((place, index) => {
+    const marker = new google.maps.Marker({
+      position: { lat: place.lat, lng: place.lng },
+      map: myMap,
+      label: `${index + 1}`,
+      title: place.name
+    });
+
+    const infoWindow = new google.maps.InfoWindow({
+      content: `<strong>${index + 1}. ${place.name}</strong>`
+    });
+
+    marker.addListener('click', () => {
+      infoWindow.open(myMap, marker);
+    });
+
+    bounds.extend(marker.getPosition());
+  });
+
+  myMap.fitBounds(bounds);
+}

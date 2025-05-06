@@ -10,6 +10,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Pretendard&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="../css/style.css">
   <link rel="stylesheet" href="../css/main.css">
+  <link rel="icon" href="../img/favicon-32x32.png">
 
 </head>
 <body>
@@ -36,11 +37,11 @@
       </div>
       <div class="input-row">
         <label>여행 스타일</label>
-        <input type="text" name="travelStyle" placeholder="예: 여유로운, 빡센 일정, 휴식 중심 등" />
+        <input type="text" name="travelStyle" placeholder="예: 여유로운, 빡센 일정, 휴식 중심 등" required/>
       </div>
       <div class="input-row">
         <label>관심사</label>
-        <input type="text" name="interests" placeholder="예: 맛집 탐방, 미술관, 트레킹, 쇼핑 등" />
+        <input type="text" name="interests" placeholder="예: 맛집 탐방, 미술관, 트레킹, 쇼핑 등" required/>
       </div>
       <div class="input-row">
         <label>나라</label>
@@ -52,25 +53,37 @@
           <option value="US">미국</option>
           <option value="IT">이탈리아</option>
         </select>
+      </div>
+      
+      <div class="input-row">
         <label>여행 지역 (선택)</label>
-<select name="region" id="region-select">
-  <option value="">선택 안 함</option>
-</select>
+        <select name="region" id="region-select">
+          <option value="">선택 안 함</option>
+        </select>
+      </div>
       </div>
       <button type="submit" class="recommend-btn">여행 추천 받기 ✈️</button>
-    </form>
-    <button type="button" id="ai-smart-recommend-btn" class="recommend-btn" style="background-color: #4CAF50; margin-top: 10px;">
-      AI로 일정 추천 받기! 🤖
+      <button type="button" id="ai-smart-recommend-btn"
+    class="recommend-btn" >
+    AI로 일정 추천 받기! 🤖
     </button>
+    </form>
+    
   </section>
 
   <script>
-    document.getElementById('filterForm')
-      .addEventListener('submit', e => {
-        e.preventDefault();
-        const params = new URLSearchParams(new FormData(e.target)).toString();
-        window.location.href = `map.html?${params}`;
-      });
+    // '여행 추천 받기 ✈️' 버튼 (form 이동용)
+  document.querySelector('.recommend-btn[type="submit"]').addEventListener('click', (e) => {
+  const form = document.getElementById('filterForm');
+  if (!form.checkValidity()) {
+    form.reportValidity();
+    e.preventDefault();  // ✅ 유효성 통과 못했을 때는 이동 막기
+    return;
+  }
+
+  const params = new URLSearchParams(new FormData(form)).toString();
+  window.location.href = `map.html?${params}`;
+  });
   </script>
 
 

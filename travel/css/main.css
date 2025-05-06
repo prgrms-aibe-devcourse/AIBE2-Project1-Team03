@@ -62,7 +62,8 @@
     width: 100%;
   }
   .recommend-btn:hover {
-    background: #02a64f;
+    background-color: #43a047;
+    transform: translateY(-2px);
   }
 
 
@@ -97,6 +98,28 @@
     font-size: 0.85rem;
     color: #777;
     margin-top: 4px;
+  }
+
+  /* AI 추천 버튼 공통 스타일 */
+  #ai-smart-recommend-btn {
+  background-color: #03c75a;
+  color: white;
+  font-weight: bold;
+  font-size: 16px;
+  border: none;
+  border-radius: 30px;
+  padding: 12px 24px;
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+  margin-top: 10px;
+  width: 100%;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+  /* Hover 효과 */
+  #ai-smart-recommend-btn:hover {
+  background-color: #43a047;
+  transform: translateY(-2px);
   }
   
 

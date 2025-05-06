@@ -23,12 +23,16 @@ document.getElementById('ai-smart-recommend-btn').addEventListener('click', asyn
     const travelStyle = document.querySelector('[name="travelStyle"]').value;
     const interests = document.querySelector('[name="interests"]').value;
     const region = document.querySelector('[name="region"]').value;
-   
-  
-    if (!minBudget || !maxBudget || !days) {
-      alert("예산과 여행 일수를 모두 입력해주세요.");
+
+    const form = document.getElementById('filterForm');
+
+    // ✅ 브라우저 기본 유효성 검사 실행
+    if (!form.checkValidity()) {
+      form.reportValidity();  // 
       return;
     }
+   
+
   
     const countryMap = {
       KR: "대한민국",

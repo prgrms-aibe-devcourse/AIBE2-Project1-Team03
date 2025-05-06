@@ -55,20 +55,25 @@ document.addEventListener("DOMContentLoaded", function () {
 
                 if (!messageListenerAdded) {
                     window.addEventListener("message", async function (event) {
-                        if (event.origin === window.location.origin && event.data) {
+                        if (
+                            event.origin === window.location.origin &&
+                            event.data &&
+                            event.data.title &&
+                            event.data.content &&
+                            event.data.country
+                          ) {
                             const reviewData = {
-                                ...event.data,
-                                email: user.email,
-                                uid: user.uid,
-                                createdAt: Timestamp.now(),
-                                comments: []
+                              ...event.data,
+                              email: user.email,
+                              uid: user.uid,
+                              createdAt: Timestamp.now(),
+                              comments: []
                             };
-
                             await saveReview(reviewData);
-
+                          
                             const selectedContinent = document.querySelector('input[name="continent"]:checked')?.id.replace("radio-", "") || "모두";
                             renderReviews(selectedContinent);
-                        }
+                          }
                     });
                     messageListenerAdded = true;
                 }
@@ -156,7 +161,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 li.innerHTML = `
                     <p class="review-title"><strong>${review.title}</strong></p>  
                     <div class="review-summary">
-                        <img src="${review.imageUrl}" alt="Review Image">
+                    ${review.imageUrl ? `<img src="${review.imageUrl}" alt="Review Image">` : ""}
                         <div class="review-meta">
                         <p><strong>🚩:</strong> ${review.country}</p>
                         <p><strong>👤:</strong> ${review.email}</p>

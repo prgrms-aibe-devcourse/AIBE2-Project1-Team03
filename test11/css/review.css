@@ -241,7 +241,7 @@ input[type=radio]:checked + label {
 
 .review-summary img {
   max-width: 100%;
-  max-height: 300px;
+  max-height: 200px;
   object-fit: cover;
   border-radius: 10px;
   margin-top: 3px;

@@ -23,8 +23,8 @@ body {
     margin: 5px;
     padding: 10px 16px;
     border: none;
-    background: linear-gradient(135deg, #d4c1ec, #e6d6f3);
-    color: white;
+    background: #f0f4ff;
+    color: rgb(102, 96, 96);
     font-weight: 600;
     font-size: 1rem;
     border-radius: 12px;
@@ -219,7 +219,7 @@ body {
     padding: 10px 16px;
     gap: 8px;
     border-radius: 12px;
-    background: linear-gradient(135deg, #f0f0f0, #d9e4f5);
+    background: linear-gradient(135deg, #8dcfe4, #5f96e7);
     border: 1px solid #d0d0d0;
     box-shadow: 0 2px 5px rgba(0,0,0,0.05);
     color: white;
@@ -431,3 +431,5 @@ body {
 .destination-cost {
   font-weight: 500;
 }
+
+

@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ko">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -8,57 +8,59 @@
     <!-- <script src="../js/newReview.js" defer></script> -->
 </head>
 <body>
-    <h3>Write a Review</h3>
+    <header>
+        <h2>후기 작성</h2>
+    </header>
     <form id="review-form">
         <!-- 대륙 선택 라디오 버튼 -->
-        <input type="radio" name="continent" id="radio-asia">아시아
-        <input type="radio" name="continent" id="radio-europe">유럽
-        <input type="radio" name="continent" id="radio-america">아메리카
-
-        <!-- 대륙별 지역 선택 체크박스 -->
-        <div id="asia-view" class="continent-view" style="display:none;">
-            <label>
-                <input type="checkbox" id="korea"> 한국
-            </label>
-            <label>
-                <input type="checkbox" id="japan"> 일본
-            </label>
-            <label>
-                <input type="checkbox" id="china"> 중국
-            </label>
-        </div>
-        <div id="europe-view" class="continent-view" style="display:none;">
-            <label>
-                <input type="checkbox" id="italy"> 이탈리아
-            </label>
-            <label>
-                <input type="checkbox" id="france"> 프랑스
-            </label>
-            <label>
-                <input type="checkbox" id="uk"> 영국
-            </label>
-            <label>
-                <input type="checkbox" id="switzerland"> 스위스
-            </label>
-        </div>
-        <div id="america-view" class="continent-view" style="display:none;">
-            <label>
-                <input type="checkbox" id="usa"> 미국
-            </label>
-            <label>
-                <input type="checkbox" id="canada"> 캐나다
-            </label>
-            <label>
-                <input type="checkbox" id="brazil"> 브라질
-            </label>
+        <div id="continent-city">
+            <section id="reviews-by-continent">
+      
+              <div id="continent-buttons">
+                <div>
+                  <input type="radio" class="radio" name="continent" id="radio-asia" checked>
+                  <label for="radio-asia">아시아</label>
+                </div>
+                <div>
+                  <input type="radio" class="radio" name="continent" id="radio-europe">
+                  <label for="radio-europe">유럽</label>
+                </div>
+                <div>
+                  <input type="radio" class="radio" name="continent" id="radio-america">
+                  <label for="radio-america">아메리카</label>
+                </div>
+              </div>
+            <!-- 대륙별 지역 선택 체크박스 -->
+                <div id="city-checkboxes">
+                    <div id="asia-view" class="continent-view" style="display: none;">
+                    <input type="checkbox" id="korea"><label for="korea">한국</label>
+                    <input type="checkbox" id="japan"><label for="japan">일본</label>
+                    <input type="checkbox" id="china"><label for="china">중국</label>
+                    </div>
+                    <div id="europe-view" class="continent-view" style="display: none;">
+                    <input type="checkbox" id="italy"><label for="italy">이탈리아</label>
+                    <input type="checkbox" id="france"><label for="france">프랑스</label>
+                    <input type="checkbox" id="uk"><label for="uk">영국</label>
+                    <input type="checkbox" id="switzerland"><label for="switzerland">스위스</label>
+                    </div>
+                    <div id="america-view" class="continent-view" style="display: none;">
+                    <input type="checkbox" id="usa"><label for="usa">미국</label>
+                    <input type="checkbox" id="canada"><label for="canada">캐나다</label>
+                    <input type="checkbox" id="brazil"><label for="brazil">브라질</label>
+                    </div>
+                </div>
+  
+            </section>
         </div>
 
-        <!-- 리뷰 내용 작성 텍스트 영역 -->
-        <input type="text" id="review-title" placeholder="제목을 입력하세요" required><br><br>
-        <textarea id="review-text" placeholder="여기에 내용을 입력하세요..." rows="5" cols="40" required></textarea><br><br>
-        <!-- 리뷰 내용 작성 텍스트 영역 아래에 추가 -->
-        <input type="file" id="image-upload" accept="image/*"><br><br>
-        <button type="submit">Submit Review</button>
+        <div id="review-writte">
+            <!-- 리뷰 내용 작성 텍스트 영역 -->
+            <input type="text" id="review-title" placeholder="제목을 입력하세요" required><br><br>
+            <textarea id="review-text" placeholder="내용을 입력하세요" rows="5" cols="40" required></textarea><br><br>
+            <!-- 리뷰 내용 작성 텍스트 영역 아래에 추가 -->
+            <input type="file" id="image-upload" accept="image/*"><br><br>
+            <button type="submit">후기 업로드</button>
+        </div>
     </form>
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js";
@@ -89,6 +91,11 @@
             const radioAsia = document.getElementById('radio-asia');
             const radioEurope = document.getElementById('radio-europe');
             const radioAmerica = document.getElementById('radio-america');
+
+            // 페이지 로드 시 아시아 체크박스 보이기
+            if (radioAsia.checked) {
+                asiaView.style.display = 'block';
+            }   
 
             // 대륙 라디오 버튼 클릭 시 해당 대륙의 도시 목록 보여주기
             radioAsia.addEventListener('click', () => {

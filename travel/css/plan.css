@@ -1,3 +1,5 @@
+
+
 /* === 전역 스타일 (반드시 포함) === */
 body {
     margin: 0;
@@ -13,16 +15,28 @@ body {
   header h1 {
     font-size: 32px;
     color: #1976d2;
-    margin-bottom: 10px;
+    margin-right: 40px;  /* ← 요걸로 왼쪽 정렬 + 위치 조정 */
+    
   }
   
   button {
     margin: 5px;
-    padding: 8px 12px;
+    padding: 10px 16px;
     border: none;
-    background-color: #d5c6e0;
-    border-radius: 10px;
+    background: linear-gradient(135deg, #d4c1ec, #e6d6f3);
+    color: white;
+    font-weight: 600;
+    font-size: 1rem;
+    border-radius: 12px;
     cursor: pointer;
+    transition: all 0.2s ease-in-out;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+  }
+  
+  button:hover {
+    background: linear-gradient(135deg, #bfa4d5, #d8c1e8);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 10px rgba(0,0,0,0.12);
   }
   
   /* === 여행 일정(plan.html) 전용 스타일 === */
@@ -202,29 +216,45 @@ body {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 8px 12px;
+    padding: 10px 16px;
     gap: 8px;
-    border-radius: 10px;
-    background: #eee;
-    border: none;
-    cursor: pointer;
+    border-radius: 12px;
+    background: linear-gradient(135deg, #f0f0f0, #d9e4f5);
+    border: 1px solid #d0d0d0;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+    color: white;
+    font-weight: 500;
+    transition: all 0.2s ease-in-out;
+    font-family: 'Pretendard', sans-serif;
   }
   
   .tab:hover {
-    background-color: #ddd;
+    background: linear-gradient(135deg, #e2ebff, #cfdaf0);
+    box-shadow: 0 3px 6px rgba(0,0,0,0.1);
   }
 
   .tab.active:not(.my-schedule-tab) {
-    background-color: #ddd;
+    background: linear-gradient(135deg, #b5d0ff, #d0e2ff);
+    border: 1px solid #90bfff;
+    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.1);
+    color: white;
+    font-weight: 600;
+    font-family: 'Pretendard', sans-serif;
   }
   
   .add-tab {
-    background-color: #d5c6e0;
+    background: linear-gradient(135deg, #9be7c4, #70c1b3); /* 민트~청록 그라데이션 */
     color: white;
+    font-weight: bold;
+    padding: 10px 16px;
+    border: none;
+    border-radius: 12px;
+    box-shadow: 0 3px 6px rgba(0,0,0,0.1);
+    transition: background 0.3s ease;
   }
   
   .add-tab:hover {
-    background-color: #bfa4d5;
+    background: linear-gradient(135deg, #7ddfc3, #5ab2a2); /* 더 진하게 */
   }
   
   .tab-close {
@@ -246,12 +276,18 @@ body {
 
 /* 나의 일정 탭 전용 스타일 */
 .my-schedule-tab {
-  background-color: #c5a1de;
+  background: linear-gradient(135deg, #a18cd1, #fbc2eb); /* 퍼플~핑크 감성 */
   color: white;
+  font-weight: bold;
+  border: none;
+  padding: 10px 16px;
+  border-radius: 12px;
+  box-shadow: 0 3px 6px rgba(0,0,0,0.1);
+  transition: background 0.3s ease;
 }
 
 .my-schedule-tab:hover {
-  background-color: #a772d2;
+  background: linear-gradient(135deg, #957dad, #f48fb1); /* hover시 약간 더 진하게 */
 }
 
 .my-schedule-tab.active {
@@ -353,6 +389,45 @@ body {
 
 .destination-cost {
   font-size: 0.9rem;
-  color: #333;
-  margin-top: 4px;
+  font-weight: 600;
+  color: #2e7d32;
+  margin-bottom: 4px;
+}
+
+
+.total-cost-display {
+  background: linear-gradient(135deg, #fdd835, #dbb761);
+  color: #74514b;
+  font-weight: bold;
+  font-size: 1.2rem;
+  padding: 10px 16px;
+  border-radius: 12px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+  margin-bottom: 1rem;
+  display: inline-block;
+}
+
+
+
+
+
+.destination-description {
+  font-size: 0.95rem;
+  line-height: 1.5;
+  color: #4a4a4a;
+  margin-top: 6px;
+  background: #f2f2f7;
+  padding: 8px 12px;
+  border-radius: 8px;
+  white-space: pre-wrap;
+  box-shadow: inset 0 1px 3px rgba(0,0,0,0.05);
+}
+
+
+.destination-name {
+  font-weight: 600;
+}
+
+.destination-cost {
+  font-weight: 500;
 }

@@ -45,6 +45,7 @@ async function saveToFirestore(scheduleName) {
     displayName: scheduleName,
     days: days,
     totalCost: totalCost, // ✅ 저장!
+    region: schedule.region || '도쿄',
     updatedAt: firebase.firestore.FieldValue.serverTimestamp()
   };
 
@@ -99,7 +100,8 @@ async function loadItinerary(uid) {
           schedules[displayName] = {
             daysData: days,
             daysOrder: order,
-            dayCount: order.length
+            dayCount: order.length,
+            region: data.region || '도쿄' // ✅ region도 저장
           };
           
           currentSchedule = displayName;
@@ -223,14 +225,33 @@ function switchTab(scheduleName) {
   currentSchedule = scheduleName;
   renderTabs();
   renderDays();
+  const region = schedules[scheduleName]?.region || '도쿄'; // ✅ 선택된 일정의 region
+  const allPlaces = Object.values(daysData).flat();
 
   if (scheduleName === "나의 일정") {
     const { daysData } = schedules["나의 일정"];
     const allPlaces = Object.values(daysData).flat();
     document.getElementById("my-schedule-map").style.display = "block";
   
-    getCoordinatesFromPlaces(Object.values(daysData)).then(coords => {
-      initMyMap(coords[0] || { lat: 34.0522, lng: -118.2437 });
+    getCoordinatesFromPlaces(allPlaces, region).then(coords => {
+      const regionCenterMap = {
+        "오사카": { lat: 34.6937, lng: 135.5023 },
+        "도쿄": { lat: 35.6895, lng: 139.6917 },
+        "교토": { lat: 35.0116, lng: 135.7681 },
+        "삿포로": { lat: 43.0618, lng: 141.3545 },
+        "파리": { lat: 48.8566, lng: 2.3522 },
+        "로마": { lat: 41.9028, lng: 12.4964 },
+        "밀라노": { lat: 45.4642, lng: 9.1900 },
+        "뉴욕": { lat: 40.7128, lng: -74.0060 },
+        "LA": { lat: 34.0522, lng: -118.2437 },
+        "샌프란시스코": { lat: 37.7749, lng: -122.4194 },
+        "서울": { lat: 37.5665, lng: 126.9780 },
+        "부산": { lat: 35.1796, lng: 129.0756 },
+        "제주도": { lat: 33.4996, lng: 126.5312 },
+      };
+    
+      const center = regionCenterMap[region] || { lat: 35.6895, lng: 139.6917 }; // fallback
+      initMyMap(center);  // ✅ 지도 중심을 region에 맞게
       renderMyMarkers(coords);
     });
   } else {
@@ -850,19 +871,32 @@ function renderMyMarkers(places) {
   myScheduleMap.fitBounds(bounds);
 }
 
-async function getCoordinatesFromPlaces(allDays) {
+async function getCoordinatesFromPlaces(allDays, region = '도쿄') {
   const proxy = 'http://localhost:8080/';
   const key = 'AIzaSyA5ueda7Qmq4m_agO069YgX82NkEhJCzRY';
+  const regionCenterMap = {
+    "오사카": { lat: 34.6937, lng: 135.5023 },
+    "도쿄": { lat: 35.6895, lng: 139.6917 },
+    "교토": { lat: 35.0116, lng: 135.7681 },
+    "삿포로": { lat: 43.0618, lng: 141.3545 },
+    "파리": { lat: 48.8566, lng: 2.3522 },
+    "로마": { lat: 41.9028, lng: 12.4964 },
+    "밀라노": { lat: 45.4642, lng: 9.1900 },
+    "뉴욕": { lat: 40.7128, lng: -74.0060 },
+    "LA": { lat: 34.0522, lng: -118.2437 },
+    "샌프란시스코": { lat: 37.7749, lng: -122.4194 },
+    "서울": { lat: 37.5665, lng: 126.9780 },
+    "부산": { lat: 35.1796, lng: 129.0756 },
+    "제주도": { lat: 33.4996, lng: 126.5312 },
+  };
 
-  const region = 'LA';
-  const regionCenter = { lat: 34.0522, lng: -118.2437 };
-
+  const center = regionCenterMap[region] || { lat: 35.6895, lng: 139.6917 }; // ✅ 지역 중심
   const coords = [];
 
   for (const day of allDays) {
     for (const place of day) {
       const query = encodeURIComponent(place.name);
-      const url = `${proxy}https://maps.googleapis.com/maps/api/place/textsearch/json?query=${query}&location=${regionCenter.lat},${regionCenter.lng}&radius=20000&key=${key}&language=ko`;
+      const url = `${proxy}https://maps.googleapis.com/maps/api/place/textsearch/json?query=${query}&location=${center.lat},${center.lng}&radius=20000&key=${key}&language=ko`;
 
       try {
         const res = await fetch(url);
@@ -916,7 +950,8 @@ async function showMapForDay(day) {
     center: { lat: 34.0522, lng: -118.2437 } // 기본값: LA 중심
   });
 
-  const coords = await getPlaceCoordinates(places.map(p => p.name), 'LA');
+  const region = schedules[currentSchedule]?.region || '도쿄';
+  const coords = await getPlaceCoordinates(places.map(p => p.name), region);
   const bounds = new google.maps.LatLngBounds();
 
   coords.forEach((place, index) => {

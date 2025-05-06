@@ -4,7 +4,7 @@
 
 
   header {
-    margin-top: 40px;
+    
     text-align: center;
   }
   header h1 {
@@ -29,7 +29,7 @@
   .filter-section h2 {
     font-size: 22px;
     margin-bottom: 24px;
-    color: #333;
+    color: #35bbb0;
     text-align: center;
   }
   .input-row {

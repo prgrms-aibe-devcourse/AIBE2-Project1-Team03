@@ -358,7 +358,7 @@ const regionOptions = {
 
 
 
-  function convertItineraryToFirestoreFormat(rawText, countryCode, displayName) {
+  function convertItineraryToFirestoreFormat(rawText, countryCode, displayName, region) {
     const days = [];
     let totalTripCost = 0;
   
@@ -389,7 +389,8 @@ const regionOptions = {
             name: name.trim(),
             description: description.trim(),
             type: typeMap[timeSlot],
-            cost
+            cost,
+            region
           });
   
           dailyCost += cost;
@@ -408,6 +409,7 @@ const regionOptions = {
     return {
       country: countryCode,
       displayName,
+      region,
       updatedAt: new Date().toISOString(),
       days,
       totalCost: totalTripCost
@@ -429,13 +431,14 @@ document.getElementById("save-itinerary-btn").addEventListener("click", async ()
     const rawText = latestRawItineraryText;
     const countryCode = document.querySelector('[name="country"]').value;
     const displayName = prompt("일정 이름을 입력해주세요 (예: 오사카_맛집투어)");
+    const region = document.querySelector('[name="region"]').value; 
   
     if (!displayName) {
       alert("일정 이름은 필수예요!");
       return;
     }
   
-    const docData = convertItineraryToFirestoreFormat(rawText, countryCode, displayName);
+    const docData = convertItineraryToFirestoreFormat(rawText, countryCode, displayName, region);
   
     try {
       await addDoc(collection(db, "users", user.uid, "itineraries"), docData);

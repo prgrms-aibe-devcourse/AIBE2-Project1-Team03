@@ -348,3 +348,11 @@ body {
 .menu-item:hover {
   background-color: #f0f0f0;
 }
+
+
+
+.destination-cost {
+  font-size: 0.9rem;
+  color: #333;
+  margin-top: 4px;
+}

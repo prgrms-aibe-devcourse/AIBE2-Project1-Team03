@@ -27,28 +27,28 @@ async function saveToFirestore(scheduleName) {
   const schedule = schedules[scheduleName];
   if (!schedule) return;
 
-  // Firestore로 보낼 형식으로 재구성
+  // 🔢 Day 데이터 정리
   const days = schedule.daysOrder.map(day => ({
     day: parseInt(day.replace('Day ', '')),
     places: schedule.daysData[day]
   }));
 
+  // 🔢 총 비용 계산
+  const totalCost = schedule.daysOrder.reduce((sum, day) => {
+    return sum + schedule.daysData[day].reduce((dSum, place) => dSum + Number(place.cost || 0), 0);
+  }, 0);
+
   const docId = scheduleNameToDocId[scheduleName] || scheduleName;
   const docRef = db.collection("users").doc(user.uid).collection("itineraries").doc(docId);
 
-  const existing = await docRef.get();
   const data = {
     displayName: scheduleName,
     days: days,
+    totalCost: totalCost, // ✅ 저장!
     updatedAt: firebase.firestore.FieldValue.serverTimestamp()
   };
 
-  // 🔐 updatedAt은 처음 저장할 때만
-  if (!existing.exists) {
-    data.updatedAt = firebase.firestore.FieldValue.serverTimestamp();
-  }
-
-  await docRef.set(data, { merge: true }); // merge 옵션 추가!
+  await docRef.set(data, { merge: true });
 }
 
 // 로그인 시 일정 로드
@@ -284,6 +284,12 @@ function renderDays() {
   const { daysData, daysOrder } = schedules[currentSchedule];
   daysContainer.innerHTML = '';
   daySelect.innerHTML = '';
+  // 🔽 총 비용 표시 부분 추가
+  const total = getTotalCost();
+  const totalDiv = document.createElement('div');
+  totalDiv.className = 'total-cost-display';
+  totalDiv.textContent = `💰 총 예상 비용: $${total.toLocaleString()}`;
+  daysContainer.appendChild(totalDiv);
 
   daysOrder.forEach(day => {
     const dayDiv = createDayElement(day);
@@ -296,6 +302,15 @@ function renderDays() {
     daySelect.appendChild(option);
   });
 }
+
+
+function getTotalCost() {
+  const schedule = schedules[currentSchedule];
+  return schedule.daysOrder.reduce((sum, day) => {
+    return sum + schedule.daysData[day].reduce((dSum, p) => dSum + Number(p.cost || 0), 0);
+  }, 0);
+}
+
 
 // -------------- Day 박스 구성 -------------
 // Day 하나를 구성하는 블럭 생성
@@ -318,6 +333,7 @@ function createDayElement(day) {
 
   const dayTitle = document.createElement('h2');
   dayTitle.textContent = day;
+  dayTitle.textContent = `${day} (일일 예상 비용: $${getDayTotalCost(day)})`;
 
   leftSide.appendChild(dayHandle);
   leftSide.appendChild(dayTitle);
@@ -346,6 +362,17 @@ function createDayElement(day) {
 
   return dayDiv;
 }
+
+
+function getDayTotalCost(day) {
+  const places = schedules[currentSchedule].daysData[day];
+  return places.reduce((sum, d) => {
+    const cost = Number(d.cost);
+    return sum + (isNaN(cost) ? 0 : cost);
+  }, 0);
+}
+
+
 
 
 // -------------- Day 수정/삭제 버튼 -------------
@@ -388,6 +415,12 @@ function createDestinationElement(day, dest) {
 
   const nameDiv = document.createElement('div');
   nameDiv.className = 'destination-name';
+
+  const costDiv = document.createElement('div');
+  costDiv.className = 'destination-cost';
+  const cost = isNaN(Number(dest.cost)) ? 0 : Number(dest.cost);
+  costDiv.textContent = `예상비용: $${cost.toLocaleString()}`;
+contentWrapper.appendChild(costDiv);
 
   if (dest.type) {
     const tagBadge = document.createElement('span');
@@ -494,8 +527,8 @@ function addDestination() {
 
   const type = prompt('시간대 태그를 입력하세요 (오전, 점심, 오후, 저녁, 숙소, 공항):', '') || '';
   const description = prompt('장소에 대한 설명을 입력하세요:', '') || '';
-
-  schedules[currentSchedule].daysData[day].push({ name, type, description });
+  const cost = prompt('비용을 입력하세요 (숫자만):', '') || '';
+  schedules[currentSchedule].daysData[day].push({ name, type, description, cost });
   destinationInput.value = '';
   renderDays();
   saveToFirestore(currentSchedule);
@@ -565,9 +598,28 @@ function editDestination(day, dest) {
   const newDesc = prompt('설명 수정:', dest.description || '');
   if (newDesc !== null) dest.description = newDesc;
 
+  const newCost = prompt('비용 수정 ($):', dest.cost || '0');
+  if (newCost !== null && !isNaN(Number(newCost))) {
+    dest.cost = Number(newCost);
+  }
+
+  updateTotalCostForDay(day);
+
   renderDays();
   saveToFirestore(currentSchedule);
 }
+
+// 총 예상 비용 합계 계산
+function updateTotalCostForDay(day) {
+  const schedule = schedules[currentSchedule];
+  const total = schedule.daysData[day].reduce((sum, d) => {
+    const cost = Number(d.cost);
+    return sum + (isNaN(cost) ? 0 : cost);
+  }, 0);
+  schedule.daysData[day].totalCost = total; // UI용
+}
+
+
 
 // 목적지 삭제
 function deleteDestination(day, dest) {
@@ -847,7 +899,7 @@ async function showMapForDay(day) {
 
   // Day 블록 안에 새 div 추가
   const dayDiv = Array.from(document.querySelectorAll('.day')).find(d =>
-    d.querySelector('h2')?.textContent === day
+    d.querySelector('h2')?.textContent.startsWith(day)
   );
   const mapDiv = document.createElement('div');
   mapDiv.id = `map-${day}`;

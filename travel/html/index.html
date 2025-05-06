@@ -92,6 +92,11 @@
 <!-- ✅ AI 응답 원본 저장용 (보이게 할 필요는 없음) -->
 <div id="gemini-itinerary" style="display: none;"></div>
 
+<!-- ⏳ AI 일정 로딩 표시 -->
+<div id="loading-overlay" style="display: none">
+  <div class="spinner"></div>  <!-- ✅ 이거 -->
+  <p>AI가 여행 일정을 생성 중입니다... ✈️</p>
+</div>
    <!-- 상단 메뉴바 -->
    <script>
     fetch('navbar.html')

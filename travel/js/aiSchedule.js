@@ -58,8 +58,9 @@ document.getElementById('ai-smart-recommend-btn').addEventListener('click', asyn
     특히 숙소는 매일 포함하고, **숙소 이름을 반드시 명시**해. 숙소 이름이 같아도 생략하지 마.  
     숙소 이름도 구글맵에서 검색 가능한 실제 이름이여야 해.
     마지막 날은 공항으로 가잖아? 실제 공항이여야해
+    무조건 예산에 맞춰서 추천해줘야해 
 
-    아래 형식을 반드시 지켜서 작성해줘 무조건 :
+    아래 형식을 반드시 지켜서 작성해줘 무조건 ([]는 안써도돼) :
     
     Day 1:
     - 오전: [장소 이름] - [설명] (예상 비용: $XX)
@@ -79,7 +80,8 @@ document.getElementById('ai-smart-recommend-btn').addEventListener('click', asyn
     - 공항: [공항 이름] - [설명] (예상 비용: $XX)
     - 일일 총 비용: $XXX
     `;
-  
+   // 🔼 로딩 시작
+   showLoading();
     try {
       const response = await fetch("http://localhost:3000/gemini", {
         method: "POST",
@@ -104,6 +106,9 @@ document.getElementById('ai-smart-recommend-btn').addEventListener('click', asyn
     } catch (err) {
       console.error("Gemini 호출 오류:", err);
       alert("일정 생성 중 오류가 발생했어요.");
+    }
+    finally {
+        hideLoading(); // ✅ 로딩 종료
     }
   });
   
@@ -178,32 +183,83 @@ document.getElementById('ai-smart-recommend-btn').addEventListener('click', asyn
     btnBox.innerHTML = "";
     listBox.innerHTML = "";
   
+    let totalCost = 0; // 💰 총 비용 저장
+  
     itinerary.forEach(({ day, title, content }) => {
+      // 총 비용 누적 계산
+      const dailyMatch = content.match(/일일 총 비용:\s*\$([0-9]+)/);
+      if (dailyMatch) {
+        totalCost += parseInt(dailyMatch[1]);
+      }
+  
+      // Day 버튼 생성
       const btn = document.createElement("button");
       btn.textContent = `Day ${day}`;
+      btn.classList.add("day-button");
   
       btn.onclick = async () => {
-        listBox.innerHTML = `
-  <h3>Day${title}: </h3>
-  <pre style="white-space: pre-wrap;">${content}</pre>
-`;
+        const parsed = [];
+        const lines = content.trim().split('\n');
+        const regex = /-\s*(오전|점심|오후|저녁|숙소|공항):\s*\[?(.+?)\]?\s*-\s*(.*?)\s*\(예상 비용:\s*\$([^)]+)\)/;
   
-        // 1️⃣ 장소 이름 뽑기
-        const placeNames = extractPlaceNamesFromItinerary([{ content }]);  // 하루치만 넣음
+        let dailyTotal = "";
+        lines.forEach(line => {
+          const match = line.match(regex);
+          if (match) {
+            const [, time, name, desc, cost] = match;
+            parsed.push({ time, name, desc, cost });
+          } else if (line.includes("일일 총 비용")) {
+            dailyTotal = line;
+          }
+        });
   
-        // 2️⃣ Google Maps에서 좌표 얻기
+        listBox.innerHTML = `<h3>Day ${title}</h3>`;
+        parsed.forEach(({ time, name, desc, cost }) => {
+          const card = document.createElement("div");
+          card.style.background = "#f1f8ff";
+          card.style.borderLeft = "6px solid #2196F3";
+          card.style.marginBottom = "10px";
+          card.style.padding = "12px 16px";
+          card.style.borderRadius = "8px";
+  
+          card.innerHTML = `
+            <strong>${time} · [${name}]</strong><br>
+            <div style="margin-top: 6px;">${desc}</div>
+            <div style="margin-top: 6px; color: gray;">예상 비용: $${cost}</div>
+          `;
+          listBox.appendChild(card);
+        });
+  
+        if (dailyTotal) {
+          const costLine = document.createElement("div");
+          costLine.style.marginTop = "10px";
+          costLine.style.fontWeight = "bold";
+          costLine.style.fontSize = "16px";
+          listBox.appendChild(costLine);
+          costLine.textContent = dailyTotal;
+        }
+  
+        const placeNames = parsed.map(p => p.name);
         const coords = await getPlaceCoordinates(placeNames, region);
-  
-        // 3️⃣ 지도 초기화
         initAiMap(coords.length > 0 ? coords[0] : { lat: 35.6895, lng: 139.6917 });
-  
-        // 4️⃣ 마커 렌더링
         renderAiMarkers(coords);
       };
   
       btnBox.appendChild(btn);
     });
   
+    // 💸 총 비용 요소 추가
+    const totalCostEl = document.createElement("div");
+    totalCostEl.textContent = `총 예상 비용: $${totalCost} (예상 비용은 변동될 수 있으며, 실제 비용은 개인의 소비 패턴에 따라 달라집니다.)`;
+    totalCostEl.style.fontWeight = "bold";
+    totalCostEl.style.marginLeft = "16px";
+    totalCostEl.style.fontSize = "16px";
+    totalCostEl.style.color = "#333";
+    totalCostEl.style.alignSelf = "center";
+  
+    btnBox.appendChild(totalCostEl);
+  
+    // 첫 번째 버튼 자동 클릭
     if (itinerary.length > 0) {
       btnBox.querySelector("button").click();
     }
@@ -300,10 +356,10 @@ const regionOptions = {
 
   function convertItineraryToFirestoreFormat(rawText, countryCode, displayName) {
     const days = [];
+    let totalTripCost = 0;
   
-    // 🔧 수정된 정규식
     const dayBlocks = [...rawText.matchAll(
-      /Day\s*:?[\s]*(\d+):\s*\n([\s\S]*?)(?=\nDay\s*:?[\s]*\d+:|\n- 오전:|\n\*\*참고|\Z)/g)];
+      /Day\s*:?[\s]*(\d+):\s*\n([\s\S]*?)(?=\nDay\s*:?[\s]*\d+:|\n\*\*참고|\Z)/g)];
   
     const typeMap = {
       "오전": "오전",
@@ -317,30 +373,40 @@ const regionOptions = {
     for (const [_, dayStr, content] of dayBlocks) {
       const places = [];
       const lines = content.trim().split('\n');
+      let dailyCost = 0;
   
       for (const line of lines) {
-        const match = line.match(/-\s*(오전|점심|오후|저녁|숙소|공항):\s*\*{0,2}(.+?)\*{0,2}\s*-\s*(.*?)\s*\(예상 비용:.*?\)/);
+        const match = line.match(/-\s*(오전|점심|오후|저녁|숙소|공항):\s*\*{0,2}(.+?)\*{0,2}\s*-\s*(.*?)\s*\(예상 비용:\s*\$([^)]+)\)/);
         if (match) {
-          const [, timeSlot, name, description] = match;
+          const [, timeSlot, name, description, costStr] = match;
+          const cost = parseInt(costStr.replace(/[^0-9]/g, '')) || 0;
+  
           places.push({
             name: name.trim(),
             description: description.trim(),
-            type: typeMap[timeSlot]
+            type: typeMap[timeSlot],
+            cost
           });
+  
+          dailyCost += cost;
         }
       }
   
       days.push({
         day: parseInt(dayStr),
-        places
+        places,
+        totalCost: dailyCost
       });
+  
+      totalTripCost += dailyCost;
     }
   
     return {
       country: countryCode,
       displayName,
       updatedAt: new Date().toISOString(),
-      days
+      days,
+      totalCost: totalTripCost
     };
   }
   
@@ -375,3 +441,60 @@ document.getElementById("save-itinerary-btn").addEventListener("click", async ()
       alert("❌ 일정 저장에 실패했어요.");
     }
   });
+
+
+
+
+
+
+  function renderItineraryCards(content) {
+    const listBox = document.getElementById("ai-itinerary-list");
+    listBox.innerHTML = "";
+  
+    const lines = content.trim().split('\n');
+    lines.forEach(line => {
+      const match = line.match(/-\s*(오전|점심|오후|저녁|숙소|공항):\s*(.*?)\s*-\s*(.*?)\s*\(예상 비용:\s*\$([\d.]+)\)/);
+  
+      if (match) {
+        const [, time, name, description, cost] = match;
+  
+        const card = document.createElement("div");
+        card.className = "ai-card";
+  
+        const title = document.createElement("h4");
+        title.textContent = `${time} · ${name}`;
+  
+        const desc = document.createElement("p");
+        desc.textContent = description;
+  
+        const costElem = document.createElement("div");
+        costElem.className = "ai-cost";
+        costElem.textContent = `예상 비용: $${cost}`;
+  
+        card.appendChild(title);
+        card.appendChild(desc);
+        card.appendChild(costElem);
+  
+        listBox.appendChild(card);
+      } else if (line.startsWith("- 일일 총 비용:")) {
+        const total = document.createElement("p");
+        total.style.marginTop = "12px";
+        total.style.fontWeight = "bold";
+        total.textContent = line.replace("- ", "");
+        listBox.appendChild(total);
+      }
+    });
+  }
+
+
+
+
+  function showLoading() {
+    const overlay = document.getElementById("loading-overlay");
+    if (overlay) overlay.style.display = "flex";
+  }
+  
+  function hideLoading() {
+    const overlay = document.getElementById("loading-overlay");
+    if (overlay) overlay.style.display = "none";
+  }

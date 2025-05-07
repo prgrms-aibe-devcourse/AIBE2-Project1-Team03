@@ -226,7 +226,7 @@ function switchTab(scheduleName) {
   renderTabs();
   renderDays();
   const region = schedules[scheduleName]?.region || '도쿄'; // ✅ 선택된 일정의 region
-  const allPlaces = Object.values(daysData).flat();
+  const allPlaces = Object.values(schedules[scheduleName]?.daysData || {}).flat();
 
   if (scheduleName === "나의 일정") {
     const { daysData } = schedules["나의 일정"];
@@ -421,8 +421,8 @@ function createDestinationElement(day, dest) {
   handle.draggable = true;
   handle.addEventListener('dragstart', (e) => {
     draggedItem = destDiv;
-    draggedSourceDay = destDiv.closest('.day')?.querySelector('h2')?.textContent;
-    draggedItem.dataset.name = dest.name;
+    draggedSourceDay = destDiv.closest('.day')?.querySelector('h2')?.textContent?.split(' (')[0];
+    destDiv.dataset.name = dest.name;
   });
 
   const contentWrapper = document.createElement('div');
@@ -686,26 +686,39 @@ function moveDay(fromDay, toDay) {
 // 목적지 순서 변경
 function moveDestination(targetDestDiv, targetDayDiv) {
   if (!draggedItem || !draggedSourceDay) return;
-  const schedule = schedules[currentSchedule];
-  const dests = schedule.daysData[draggedSourceDay];
-  const draggedName = draggedItem.dataset.name;
-  const draggedData = dests.find(d => d.name === draggedName);
-  if (!draggedData) return;
-  const draggedIndex = dests.indexOf(draggedData);
-  if (draggedIndex > -1) dests.splice(draggedIndex, 1);
 
-  const targetDay = targetDayDiv?.querySelector('h2')?.textContent || draggedSourceDay;
+  const schedule = schedules[currentSchedule];
+  const sourceList = schedule.daysData[draggedSourceDay];
+  if (!sourceList) return;
+
+  const draggedName = draggedItem.dataset.name;
+  const draggedData = sourceList.find(d => d.name === draggedName);
+  if (!draggedData) return;
+
+  const draggedIndex = sourceList.indexOf(draggedData);
+  if (draggedIndex > -1) sourceList.splice(draggedIndex, 1);
+
+  let targetDay = targetDayDiv?.querySelector('h2')?.textContent?.split(' (')[0] || draggedSourceDay;
+  if (!schedule.daysData[targetDay]) {
+    schedule.daysData[targetDay] = [];
+  }
+
+  const targetList = schedule.daysData[targetDay];
+
   if (targetDestDiv) {
     const targetDataName = targetDestDiv.querySelector('.destination-name span')?.textContent;
-    const targetData = schedule.daysData[targetDay].find(d => d.name === targetDataName);
-    const targetIndex = schedule.daysData[targetDay].indexOf(targetData);
-    schedule.daysData[targetDay].splice(targetIndex + 1, 0, draggedData);
+    const targetData = targetList.find(d => d.name === targetDataName);
+    const targetIndex = targetList.indexOf(targetData);
+    targetList.splice((targetIndex > -1 ? targetIndex + 1 : targetList.length), 0, draggedData);
   } else {
-    schedule.daysData[targetDay].push(draggedData);
+    targetList.push(draggedData);
   }
-  renderDays();
-}
 
+  renderDays();
+
+  // ✅ 여기 추가!
+  saveToFirestore(currentSchedule);
+}
 // 드래그 시작
 document.addEventListener('dragstart', (e) => {
   const item = e.target.closest('.destination, .day');
@@ -715,9 +728,10 @@ document.addEventListener('dragstart', (e) => {
   draggedItem.classList.add('dragging');
 
   if (item.classList.contains('destination')) {
-    draggedSourceDay = item.closest('.day')?.querySelector('h2')?.textContent;
+    draggedSourceDay = item.closest('.day')?.querySelector('h2')?.textContent?.split(' (')[0];
   }
 });
+
 
 // 드래그 끝났을 때
 document.addEventListener('dragend', (e) => {
@@ -961,15 +975,49 @@ async function showMapForDay(day) {
       label: `${index + 1}`,
       title: place.name
     });
+  
+marker.addListener('click', async () => {
+  let content = `
+    <div style="padding: 10px; max-width: 300px;">
+      <div style="font-weight: bold; font-size: 14px; margin-bottom: 8px;">
+        ${index + 1}. ${place.name}
+      </div>
+  `;
 
-    const infoWindow = new google.maps.InfoWindow({
-      content: `<strong>${index + 1}. ${place.name}</strong>`
-    });
+  if (place.place_id) {
+    try {
+      const detailUrl = `http://localhost:8080/https://maps.googleapis.com/maps/api/place/details/json?place_id=${place.place_id}&fields=photo&key=AIzaSyA5ueda7Qmq4m_agO069YgX82NkEhJCzRY`;
+      const res = await fetch(detailUrl);
+      const data = await res.json();
+      const photoRef = data.result?.photos?.[0]?.photo_reference;
 
-    marker.addListener('click', () => {
-      infoWindow.open(map, marker);
-    });
+      if (photoRef) {
+        const photoUrl = `https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photoreference=${photoRef}&key=AIzaSyA5ueda7Qmq4m_agO069YgX82NkEhJCzRY`;
 
+        content += `
+          <img 
+            src="${photoUrl}" 
+            style="
+              width: 100%;
+              max-height: 180px;
+              object-fit: cover;
+              border-radius: 10px;
+              box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+            "
+          />
+        `;
+      }
+    } catch (err) {
+      console.warn("사진 불러오기 실패:", err);
+    }
+  }
+
+  content += `</div>`;
+
+  const infoWindow = new google.maps.InfoWindow({ content });
+  infoWindow.open(map, marker);
+});
+  
     bounds.extend(marker.getPosition());
   });
 
@@ -1003,7 +1051,7 @@ async function getPlaceCoordinates(placeNames, region = '') {
   const center = regionCenterMap[region] || { lat: 35.6895, lng: 139.6917 };
 
   for (const name of placeNames) {
-    const query = encodeURIComponent(name);
+    const query = encodeURIComponent(`${name} ${region}`);
     const url = `${proxy}https://maps.googleapis.com/maps/api/place/textsearch/json?query=${query}&location=${center.lat},${center.lng}&radius=20000&key=${key}&language=ko`;
 
     try {
@@ -1011,7 +1059,7 @@ async function getPlaceCoordinates(placeNames, region = '') {
       const data = await res.json();
       if (data.status === 'OK' && data.results.length > 0) {
         const loc = data.results[0].geometry.location;
-        results.push({ name, lat: loc.lat, lng: loc.lng });
+        results.push({ name, lat: loc.lat, lng: loc.lng, place_id: data.results[0].place_id  });
       }
     } catch (err) {
       console.warn('Place fetch error for:', name, err);

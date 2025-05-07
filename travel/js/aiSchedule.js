@@ -66,7 +66,9 @@ document.getElementById('ai-smart-recommend-btn').addEventListener('click', asyn
     숙소 이름도 구글맵에서 검색 가능한 실제 이름이여야 해.
     마지막 날은 공항으로 가잖아? 실제 공항이여야해 최대한 동선에 맞춰 가까운 공항이여야하고
     최대한 예산에 맞춰서(최소${minBudget}달러여야하고 최대${maxBudget} 달러여야해) 추천해줘야해 
-    
+    - "근처 식당", "시내 호텔", "공원", "쇼핑몰"처럼 **구체적 이름이 없는 표현은 절대 사용하지 마.**
+    - **모든 장소, 식당, 숙소, 공항 이름은 구글맵에서 실제로 검색 가능한 이름**이어야 하고 풀네임으로 알려줘 그래야 ${region}안에서 제대로 검색되니까.
+  
     아래 형식을 반드시 지켜서 작성해줘 무조건 ([]는 안써도돼) :
     
     Day 1:
@@ -91,7 +93,7 @@ document.getElementById('ai-smart-recommend-btn').addEventListener('click', asyn
     아래와 같이 **일정이 한 줄 더 추가**될 수 있어. 이때 시간대 이름은 그대로 반복해도 돼.
 
     - 관심사가 "맛집 탐방"이면: 점심 또는 저녁 일정이 한 번 더 추가됨 점심점심 저녁저녁 섞었으면 좋겠음 (맨날  점심 연달아서가 아니라 어떤날은 저녁 두번)
-    - 관심사가 "쇼핑" 또는 "관광지"이면: 오전 또는 오후 일정이 한 번 더 추가되는데 오전오전 오후오후 섞었으면 좋겠음 
+    - 관심사가 "쇼핑" 또는 "관광지"면: 오전 또는 오후 일정이 한 번 더 추가되는데 오전오전 오후오후 섞었으면 좋겠음 
 
     예시 (맛집 탐방의 경우):
     - 오전: [장소 이름] - [설명] (예상 비용: $XX)
@@ -111,7 +113,7 @@ document.getElementById('ai-smart-recommend-btn').addEventListener('click', asyn
     - 일일 총 비용: $XXX
 이렇게 
 
-    예시 (관심사가 쇼핑/관광지일 경우):
+    예시 (관심사가 쇼핑 또는 관광지일 경우):
     - 오전: [장소 이름] - [설명] (예상 비용: $XX)
     - 오전: [장소 이름] - [설명] (예상 비용: $XX)
     - 점심: [식당 이름] - [설명] (예상 비용: $XX)
@@ -130,6 +132,7 @@ document.getElementById('ai-smart-recommend-btn').addEventListener('click', asyn
 
 
     반드시 위와 동일한 형식을 유지해서 작성해야하는데 여행스타일이 "여유"면 기본 형식대로 해줘
+
 
     `;
    // 🔼 로딩 시작
@@ -363,7 +366,7 @@ document.getElementById('ai-smart-recommend-btn').addEventListener('click', asyn
     const center = regionCenterMap[region] || { lat: 35.6895, lng: 139.6917 };  // fallback: 도쿄
   
     for (const name of placeNames) {
-      const query = encodeURIComponent(name);
+      const query = encodeURIComponent(`${name} ${region}`); 
       const url = `${proxy}https://maps.googleapis.com/maps/api/place/textsearch/json?query=${query}&location=${center.lat},${center.lng}&radius=20000&key=${key}&language=ko`;
   
       try {

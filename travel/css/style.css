@@ -118,7 +118,7 @@ body {
     align-items: center;
     justify-content: center;
     min-height: 90vh;
-    background-color: #f5f7f9;
+    background-color: #fefefe;
   }
   
 
@@ -584,4 +584,23 @@ body {
   }
 
 
+  .day-button {
+    background: linear-gradient(135deg, #a0e9ff, #81ecec);
+    color: #4398b3;
+    font-weight: bold;
+    border: none;
+    border-radius: 12px;
+    padding: 10px 16px;
+    margin: 5px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+  }
+  
+  .day-button:hover {
+    background: linear-gradient(135deg, #81ecec, #74b9ff);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 12px rgba(0,0,0,0.15);
+  }
 
+ 

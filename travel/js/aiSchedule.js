@@ -58,12 +58,12 @@ document.getElementById('ai-smart-recommend-btn').addEventListener('click', asyn
     - 간단한 설명 (왜 추천하는지)
     - 예상 비용 (달러 기준)
     - 반드시 ${region} 지역 중심이어야 하며, 지역 외 장소는 포함하지 마
-    - 그리고 최적의 동선으로 추천해줘 
+    - 그리고 최적의 동선으로 추천해줘(뭐 오전에 어디를 가고 점심을 어디를 먹고 하는데 거리가 너무 멀면 안된다는 소리) 
     특히 숙소는 매일 포함하고, **숙소 이름을 반드시 명시**해. 숙소 이름이 같아도 생략하지 마.  
     숙소 이름도 구글맵에서 검색 가능한 실제 이름이여야 해.
-    마지막 날은 공항으로 가잖아? 실제 공항이여야해
-    무조건 예산에 맞춰서 추천해줘야해 
-
+    마지막 날은 공항으로 가잖아? 실제 공항이여야해 최대한 동선에 맞춰 가까운 공항이여야하고
+    최대한 예산에 맞춰서(최소${minBudget}달러여야하고 최대${maxBudget} 달러여야해) 추천해줘야해 
+    
     아래 형식을 반드시 지켜서 작성해줘 무조건 ([]는 안써도돼) :
     
     Day 1:
@@ -254,7 +254,8 @@ document.getElementById('ai-smart-recommend-btn').addEventListener('click', asyn
   
     // 💸 총 비용 요소 추가
     const totalCostEl = document.createElement("div");
-    totalCostEl.textContent = `총 예상 비용: $${totalCost} (예상 비용은 변동될 수 있으며, 실제 비용은 개인의 소비 패턴에 따라 달라집니다.)`;
+    totalCostEl.textContent = `총 예상 비용: $${totalCost} (* 항공권 제외 가격이며, 실제 비용은 개인의 소비 패턴에 따라 달라집니다. 
+                                                            그리고 예산안에 맞지 않으면 다시 여행 정보를 입력하는걸 추천드립니다.)`;
     totalCostEl.style.fontWeight = "bold";
     totalCostEl.style.marginLeft = "16px";
     totalCostEl.style.fontSize = "16px";

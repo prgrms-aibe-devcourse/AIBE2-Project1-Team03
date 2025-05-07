@@ -37,11 +37,21 @@
       </div>
       <div class="input-row">
         <label>여행 스타일</label>
-        <input type="text" name="travelStyle" placeholder="예: 여유로운, 빡센 일정, 휴식 중심 등" required/>
+        <select name="travelStyle" required>
+          <option value="">선택하세요</option>
+          <option value="여유">여유</option>
+          <option value="빡빡">빡빡</option>
+        </select>
       </div>
+      
       <div class="input-row">
         <label>관심사</label>
-        <input type="text" name="interests" placeholder="예: 맛집 탐방, 미술관, 트레킹, 쇼핑 등" required/>
+        <select name="interests" required>
+          <option value="">선택하세요</option>
+          <option value="맛집 탐방">맛집 탐방</option>
+          <option value="쇼핑">쇼핑</option>
+          <option value="관광지">관광지</option>
+        </select>
       </div>
       <div class="input-row">
         <label>나라</label>
@@ -62,7 +72,7 @@
         </select>
       </div>
       </div>
-      <button type="submit" class="recommend-btn">여행 추천 받기 ✈️</button>
+      <button id="form-recommend-btn" type="button" class="recommend-btn">여행 추천 받기 ✈️</button>
       <button type="button" id="ai-smart-recommend-btn"
     class="recommend-btn" >
     AI로 일정 추천 받기! 🤖
@@ -73,11 +83,10 @@
 
   <script>
     // '여행 추천 받기 ✈️' 버튼 (form 이동용)
-  document.querySelector('.recommend-btn[type="submit"]').addEventListener('click', (e) => {
+    document.getElementById('form-recommend-btn').addEventListener('click', (e) => {
   const form = document.getElementById('filterForm');
   if (!form.checkValidity()) {
     form.reportValidity();
-    e.preventDefault();  // ✅ 유효성 통과 못했을 때는 이동 막기
     return;
   }
 

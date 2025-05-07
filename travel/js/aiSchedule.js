@@ -91,7 +91,7 @@ document.getElementById('ai-smart-recommend-btn').addEventListener('click', asyn
 
     단, 여행 스타일이 "빡빡"일 경우에만 관심사에 따라 하루 일정에  
     아래와 같이 **일정이 한 줄 더 추가**될 수 있어. 이때 시간대 이름은 그대로 반복해도 돼.
-    마지막날은 제외하고 빡빡하게 해주면 좋겠어 유연하게 (예: 7일이면 한 4~5일정도 빡빡하게 )
+   
     - 관심사가 "맛집 탐방"이면: 점심 또는 저녁 일정이 한 번 더 추가됨 점심점심 저녁저녁 섞었으면 좋겠음 (맨날  점심 연달아서가 아니라 어떤날은 저녁 두번)
     - 관심사가 "쇼핑" 또는 "관광지"면: 오전 또는 오후 일정이 한 번 더 추가되는데 오전오전 오후오후 섞었으면 좋겠음 
 
@@ -414,7 +414,8 @@ const regionOptions = {
     let totalTripCost = 0;
   
     const dayBlocks = [...rawText.matchAll(
-      /Day\s*:?[\s]*(\d+):\s*\n([\s\S]*?)(?=\nDay\s*:?[\s]*\d+:|\n\*\*참고|\Z)/g)];
+      /\*{0,2}Day\s*:?[\s]*(\d+):\*{0,2}\s*\n([\s\S]*?)(?=\n\*{0,2}Day\s*:?[\s]*\d+:|\n\*\*참고|\Z)/g)];
+    
   
     for (const [_, dayStr, content] of dayBlocks) {
       const places = [];
@@ -489,6 +490,8 @@ document.getElementById("save-itinerary-btn").addEventListener("click", async ()
     }
   
     const docData = convertItineraryToFirestoreFormat(rawText, countryCode, displayName, region);
+    console.log("📝 저장할 docData:", docData);
+    console.log("📦 JSON 크기(byte):", JSON.stringify(docData).length);
   
     try {
       await addDoc(collection(db, "users", user.uid, "itineraries"), docData);

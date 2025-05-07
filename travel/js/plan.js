@@ -975,15 +975,49 @@ async function showMapForDay(day) {
       label: `${index + 1}`,
       title: place.name
     });
+  
+marker.addListener('click', async () => {
+  let content = `
+    <div style="padding: 10px; max-width: 300px;">
+      <div style="font-weight: bold; font-size: 14px; margin-bottom: 8px;">
+        ${index + 1}. ${place.name}
+      </div>
+  `;
 
-    const infoWindow = new google.maps.InfoWindow({
-      content: `<strong>${index + 1}. ${place.name}</strong>`
-    });
+  if (place.place_id) {
+    try {
+      const detailUrl = `http://localhost:8080/https://maps.googleapis.com/maps/api/place/details/json?place_id=${place.place_id}&fields=photo&key=AIzaSyA5ueda7Qmq4m_agO069YgX82NkEhJCzRY`;
+      const res = await fetch(detailUrl);
+      const data = await res.json();
+      const photoRef = data.result?.photos?.[0]?.photo_reference;
 
-    marker.addListener('click', () => {
-      infoWindow.open(map, marker);
-    });
+      if (photoRef) {
+        const photoUrl = `https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photoreference=${photoRef}&key=AIzaSyA5ueda7Qmq4m_agO069YgX82NkEhJCzRY`;
 
+        content += `
+          <img 
+            src="${photoUrl}" 
+            style="
+              width: 100%;
+              max-height: 180px;
+              object-fit: cover;
+              border-radius: 10px;
+              box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+            "
+          />
+        `;
+      }
+    } catch (err) {
+      console.warn("사진 불러오기 실패:", err);
+    }
+  }
+
+  content += `</div>`;
+
+  const infoWindow = new google.maps.InfoWindow({ content });
+  infoWindow.open(map, marker);
+});
+  
     bounds.extend(marker.getPosition());
   });
 
@@ -1025,7 +1059,7 @@ async function getPlaceCoordinates(placeNames, region = '') {
       const data = await res.json();
       if (data.status === 'OK' && data.results.length > 0) {
         const loc = data.results[0].geometry.location;
-        results.push({ name, lat: loc.lat, lng: loc.lng });
+        results.push({ name, lat: loc.lat, lng: loc.lng, place_id: data.results[0].place_id  });
       }
     } catch (err) {
       console.warn('Place fetch error for:', name, err);

@@ -1017,7 +1017,7 @@ async function getPlaceCoordinates(placeNames, region = '') {
   const center = regionCenterMap[region] || { lat: 35.6895, lng: 139.6917 };
 
   for (const name of placeNames) {
-    const query = encodeURIComponent(name);
+    const query = encodeURIComponent(`${name} ${region}`);
     const url = `${proxy}https://maps.googleapis.com/maps/api/place/textsearch/json?query=${query}&location=${center.lat},${center.lng}&radius=20000&key=${key}&language=ko`;
 
     try {
